@@ -88,7 +88,7 @@ jobs:
         id: vcpkg-id
         shell: pwsh
         run: |
-          $id = ($(git submodule status .\dependencies\maplibre-native\platform\windows\vendor\vcpkg).Trim() -split ' ')[0]
+          $id = git -C dependencies/maplibre-native/platform/windows/vendor/vcpkg rev-parse HEAD
           Add-Content -Path $env:GITHUB_OUTPUT -Value "commit_id=$id"
 
       - name: Cache vcpkg binary cache
@@ -105,7 +105,12 @@ jobs:
         shell: pwsh
         env:
           VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}\\dependencies\\maplibre-native\\platform\\windows\\vendor\\vcpkg\\archives,readwrite"
-        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: >
+          cmake -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DMLN_WITH_OPENGL=ON
+          -DMLN_WITH_EGL=OFF
+          -DMLN_WITH_VULKAN=OFF
 
       - name: Build
         run: cmake --build build --target mbgl-dotnet --parallel
