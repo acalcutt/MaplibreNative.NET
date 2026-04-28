@@ -52,11 +52,23 @@ jobs:
       release_type: ${{ steps.check.outputs.release_type }}
 
   build:
-    name: Build Windows release
-    runs-on: windows-latest
+    name: Build Windows ${{ matrix.arch }}
+    runs-on: ${{ matrix.runs-on }}
     needs: release-check
     if: ${{ needs.release-check.outputs.published == 'false' }}
     environment: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs-on: windows-latest
+            arch: x64
+            vcpkg-triplet: x64-windows
+            msvc-arch: x64
+          - runs-on: windows-11-arm
+            arch: arm64
+            vcpkg-triplet: arm64-windows
+            msvc-arch: amd64_arm64
 
     steps:
       - name: Enable Git long paths
@@ -65,38 +77,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
 
-      - name: Initialize submodules (shallow)
-        run: git submodule update --init --recursive --depth 1
-
-      - name: Set up MSVC developer tools (x64)
+      - name: Set up MSVC developer tools
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x64
+          arch: ${{ matrix.msvc-arch }}
 
-      - name: Cache vcpkg packages
-        id: vcpkg-cache
+      - name: Get vcpkg commit ID
+        id: vcpkg-id
+        shell: pwsh
+        run: |
+          $id = ($(git submodule status .\dependencies\maplibre-native\platform\windows\vendor\vcpkg).Trim() -split ' ')[0]
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "commit_id=$id"
+
+      - name: Cache vcpkg binary cache
         uses: actions/cache@v4
         with:
-          path: dependencies/maplibre-native/platform/windows/vendor/vcpkg/installed
-          key: vcpkg-x64-windows-${{ hashFiles('dependencies/maplibre-native/platform/windows/vendor/vcpkg/baseline.json', 'dependencies/maplibre-native/platform/windows/Get-VendorPackages.ps1') }}
+          path: dependencies/maplibre-native/platform/windows/vendor/vcpkg/archives
+          key: vcpkg-${{ matrix.vcpkg-triplet }}-${{ steps.vcpkg-id.outputs.commit_id }}
 
       - name: Bootstrap vcpkg
         run: |
           & "dependencies\maplibre-native\platform\windows\vendor\vcpkg\bootstrap-vcpkg.bat" -disableMetrics
 
-      - name: Install vcpkg packages
-        if: steps.vcpkg-cache.outputs.cache-hit != 'true'
-        run: |
-          $vcpkg = "dependencies\maplibre-native\platform\windows\vendor\vcpkg\vcpkg.exe"
-          $triplets = "dependencies\maplibre-native\platform\windows\vendor\vcpkg-custom-triplets"
-          & $vcpkg install curl dlfcn-win32 glfw3 libuv libjpeg-turbo libpng libwebp opengl-registry `
-            --triplet x64-windows `
-            --overlay-triplets="$triplets" `
-            --disable-metrics `
-            --clean-after-build
-
       - name: Configure CMake
+        shell: pwsh
+        env:
+          VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}\\dependencies\\maplibre-native\\platform\\windows\\vendor\\vcpkg\\archives,readwrite"
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
@@ -106,6 +114,7 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ needs.release-check.outputs.version }}"
+          $arch    = "${{ matrix.arch }}"
           $outDir  = "build\Release"
 
           New-Item -ItemType Directory -Path publish -Force
@@ -121,15 +130,15 @@ jobs:
             Where-Object { $_.Name -ne "MaplibreNative.NET.dll" } |
             Copy-Item -Destination publish\
 
-          Compress-Archive -Path "publish\*" -DestinationPath "MaplibreNative.NET-v${version}-win-x64.zip"
-          Write-Host "Packaged: MaplibreNative.NET-v${version}-win-x64.zip"
+          Compress-Archive -Path "publish\*" -DestinationPath "MaplibreNative.NET-v${version}-win-${arch}.zip"
+          Write-Host "Packaged: MaplibreNative.NET-v${version}-win-${arch}.zip"
           Get-ChildItem publish\
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts
-          path: MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-x64.zip
+          name: release-artifacts-${{ matrix.arch }}
+          path: MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-${{ matrix.arch }}.zip
           retention-days: 7
 
   release:
@@ -145,7 +154,8 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: release-artifacts
+          pattern: release-artifacts-*
+          merge-multiple: true
           path: ./artifacts
 
       - name: Extract changelog for version
