@@ -14,6 +14,40 @@ namespace DOTNET_NAMESPACE
         None,
         HeightOnly,
         WidthAndHeight,
+        /// <summary>
+        /// Constrain the map so that the screen bounds match the lat/lng bounds set via BoundOptions.
+        /// </summary>
+        Screen,
+    };
+
+    /// <summary>
+    /// Selects the tile LOD (level of detail) algorithm used when rendering at high pitch.
+    /// </summary>
+    public enum class TileLodMode : System::Byte
+    {
+        /// <summary>
+        /// Default tile LOD algorithm (center-of-screen based).
+        /// </summary>
+        Default,
+        /// <summary>
+        /// Distance-based tile LOD algorithm (tiles closer to the camera are rendered at higher detail).
+        /// </summary>
+        Distance,
+    };
+
+    /// <summary>
+    /// The type of a map style source.
+    /// </summary>
+    public enum class SourceType : System::Byte
+    {
+        Vector,
+        Raster,
+        RasterDEM,
+        GeoJSON,
+        Video,
+        Annotations,
+        Image,
+        CustomVector,
     };
 
     public enum class ViewportMode : System::UInt32

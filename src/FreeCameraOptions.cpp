@@ -27,9 +27,9 @@ namespace DOTNET_NAMESPACE
         NativePointer->lookAtPoint(*location->NativePointer, *upVector->NativePointer);
     }
 
-    System::Void FreeCameraOptions::SetPitchBearing(System::Double pitch, System::Double bearing)
+    System::Void FreeCameraOptions::SetRollPitchBearing(System::Double roll, System::Double pitch, System::Double bearing)
     {
-        NativePointer->setPitchBearing(pitch, bearing);
+        NativePointer->setRollPitchBearing(roll, pitch, bearing);
     }
 
     Vec3^ FreeCameraOptions::Position::get()

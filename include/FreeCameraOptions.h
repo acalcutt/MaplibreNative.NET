@@ -44,13 +44,14 @@ namespace DOTNET_NAMESPACE
         System::Void LookAtPoint(LatLng^ location, Vec3^ upVector);
 
         /// <summary>
-        /// Helper function for setting the orientation of the camera as a pitch and
-        /// a bearing.Both values are in degrees
+        /// Helper function for setting the orientation of the camera as a roll, pitch and
+        /// a bearing. All values are in degrees.
         /// </summary>
+        /// <param name="roll"></param>
         /// <param name="pitch"></param>
         /// <param name="bearing"></param>
         /// <returns></returns>
-        System::Void SetPitchBearing(System::Double pitch, System::Double bearing);
+        System::Void SetRollPitchBearing(System::Double roll, System::Double pitch, System::Double bearing);
 
         /// <summary>
         /// Position of the camera in slightly modified web mercator coordinates
@@ -70,7 +71,6 @@ namespace DOTNET_NAMESPACE
         /// orientation of the map: forward [0, 0, -1], up [0, -1, 0], right [1, 0, 0]
         /// 
         ///  Orientation can be set freely but certain constraints still apply
-        ///   - Orientation must be representable with only pitch and bearing.
         ///   - Pitch has an upper limit
         /// </summary>
         property Vec4^ Orientation { Vec4^ get(); System::Void set(Vec4^ value); }

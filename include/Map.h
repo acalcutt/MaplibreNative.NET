@@ -130,6 +130,8 @@ namespace DOTNET_NAMESPACE
         System::Void SetConstrainMode(ConstrainMode mode);
         System::Void SetViewportMode(ViewportMode mode);
         System::Void SetSize(Size^ size);
+        System::Void SetFrustumOffset(EdgeInsets^ offset);
+        EdgeInsets^ GetFrustumOffset();
         ScreenCoordinate PixelForLatLng(LatLng^ latLng);
         LatLng^ LatLngForPixel(ScreenCoordinate pixel);
         System::Collections::Generic::IEnumerable<ScreenCoordinate>^ PixelsForLatLngs(System::Collections::Generic::IEnumerable<LatLng^>^ latLngs);
@@ -159,7 +161,19 @@ namespace DOTNET_NAMESPACE
         /// </summary>
         property System::Byte PrefetchZoomDelta { System::Byte get(); System::Void set(System::Byte value); }
         property MapDebugOptions Debug { MapDebugOptions get(); System::Void set(MapDebugOptions value); }
+        property System::Boolean IsRenderingStatsViewEnabled { System::Boolean get(); System::Void set(System::Boolean value); }
         property System::Boolean IsFullyLoaded { System::Boolean get(); }
+
+        /// <summary>
+        /// The number of map tile requests can be reduced by using a lower level of details away from
+        /// the camera. This can improve performance, particularly when the camera pitch is high.
+        /// See the maplibre-native documentation for details on the LOD heuristic parameters.
+        /// </summary>
+        property System::Double TileLodMinRadius { System::Double get(); System::Void set(System::Double value); }
+        property System::Double TileLodScale { System::Double get(); System::Void set(System::Double value); }
+        property System::Double TileLodPitchThreshold { System::Double get(); System::Void set(System::Double value); }
+        property System::Double TileLodZoomShift { System::Double get(); System::Void set(System::Double value); }
+        property TileLodMode TileLodMode_ { TileLodMode get(); System::Void set(TileLodMode value); }
         
         /// <summary>
         /// FreeCameraOptions provides more direct access to the underlying camera

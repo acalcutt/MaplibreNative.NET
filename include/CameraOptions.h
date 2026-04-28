@@ -25,11 +25,14 @@ namespace DOTNET_NAMESPACE
         ~CameraOptions();
 
         CameraOptions^ WithCenter(LatLng^ o);
+        CameraOptions^ WithCenterAltitude(System::Nullable<System::Double> o);
         CameraOptions^ WithPadding(EdgeInsets^ p);
         CameraOptions^ WithAnchor(System::Nullable<ScreenCoordinate> o);
         CameraOptions^ WithZoom(System::Nullable<System::Double> o);
         CameraOptions^ WithBearing(System::Nullable<System::Double> o);
         CameraOptions^ WithPitch(System::Nullable<System::Double> o);
+        CameraOptions^ WithRoll(System::Nullable<System::Double> o);
+        CameraOptions^ WithFov(System::Nullable<System::Double> o);
 
         /// <summary>
         /// Coordinate at the center of the map.
@@ -63,6 +66,21 @@ namespace DOTNET_NAMESPACE
         /// two - dimensional map.
         /// </summary>
         property System::Nullable<System::Double> Pitch { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }
+
+        /// <summary>
+        /// Camera roll, measured in degrees.
+        /// </summary>
+        property System::Nullable<System::Double> Roll { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }
+
+        /// <summary>
+        /// Camera vertical field of view, measured in degrees.
+        /// </summary>
+        property System::Nullable<System::Double> Fov { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }
+
+        /// <summary>
+        /// Altitude of the center of the map, in meters above sea level.
+        /// </summary>
+        property System::Nullable<System::Double> CenterAltitude { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }
 
         static System::Boolean operator==(CameraOptions^ a, CameraOptions^ b);
         static System::Boolean operator!=(CameraOptions^ a, CameraOptions^ b);

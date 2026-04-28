@@ -1,7 +1,10 @@
 #pragma once
 #include "Convert.h"
+#include "Enums.h"
 #include "NativeWrapper.h"
 #include <mbgl/map/map_observer.hpp>
+#include <mbgl/shaders/shader_source.hpp>
+#include <mbgl/style/source.hpp>
 #include <algorithm>
 #include <msclr/gcroot.h>
 
@@ -58,8 +61,7 @@ namespace DOTNET_NAMESPACE
         delegate System::Void WillStartRenderingMapHandler();
         delegate System::Void DidFinishRenderingMapHandler(RenderMode mode);
         delegate System::Void DidFinishLoadingStyleHandler();
-        // TODO: implement the managed version
-        //delegate System::Void SourceChangedHandler(Source^ source);
+        delegate System::Void SourceChangedHandler(System::String^ id, SourceType type);
         delegate System::Void DidBecomeIdleHandler();
         delegate System::Void StyleImageMissingHandler(System::String^ id);
         
@@ -69,6 +71,13 @@ namespace DOTNET_NAMESPACE
         /// </summary>
         delegate System::Boolean CanRemoveUnusedStyleImageHandler(System::String^ id);
         delegate System::Void RegisterShadersHandler(ShaderRegistry^ shaderRegistry);
+
+        /// <summary>Fired when a shader begins compiling.</summary>
+        delegate System::Void PreCompileShaderHandler(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
+        /// <summary>Fired when a shader finishes compiling.</summary>
+        delegate System::Void PostCompileShaderHandler(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
+        /// <summary>Fired when a shader fails to compile.</summary>
+        delegate System::Void ShaderCompileFailedHandler(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
 
         event CameraWillChangeHandler^ CameraWillChange;
         event CameraIsChangingHandler^ CameraIsChanging;
@@ -81,8 +90,7 @@ namespace DOTNET_NAMESPACE
         event WillStartRenderingMapHandler^ WillStartRenderingMap;
         event DidFinishRenderingMapHandler^ DidFinishRenderingMap;
         event DidFinishLoadingStyleHandler^ DidFinishLoadingStyle;
-        // TODO: implement the managed version
-        //event SourceChangedHandler^ SourceChanged;
+        event SourceChangedHandler^ SourceChanged;
         event DidBecomeIdleHandler^ DidBecomeIdle;
         event StyleImageMissingHandler^ StyleImageMissing;
         event CanRemoveUnusedStyleImageHandler^ CanRemoveUnusedStyleImage;
@@ -92,6 +100,13 @@ namespace DOTNET_NAMESPACE
         /// as the registry becomes available.
         /// </summary>
         event RegisterShadersHandler^ RegisterShaders;
+
+        /// <summary>Fired when a shader begins compiling.</summary>
+        event PreCompileShaderHandler^ PreCompileShader;
+        /// <summary>Fired when a shader finishes compiling successfully.</summary>
+        event PostCompileShaderHandler^ PostCompileShader;
+        /// <summary>Fired when a shader fails to compile.</summary>
+        event ShaderCompileFailedHandler^ ShaderCompileFailed;
 
         MapObserver();
         ~MapObserver();
@@ -108,7 +123,7 @@ namespace DOTNET_NAMESPACE
         virtual System::Void onWillStartRenderingMap();
         virtual System::Void onDidFinishRenderingMap(RenderMode mode);
         virtual System::Void onDidFinishLoadingStyle();
-        //virtual System::Void onSourceChanged(Source^ source);
+        virtual System::Void onSourceChanged(System::String^ id, SourceType type);
         virtual System::Void onDidBecomeIdle();
         virtual System::Void onStyleImageMissing(System::String^ id);
 
@@ -120,6 +135,9 @@ namespace DOTNET_NAMESPACE
         /// <returns></returns>
         virtual System::Boolean onCanRemoveUnusedStyleImage(System::String^ id);
         virtual System::Void onRegisterShaders(ShaderRegistry^ shaderRegistry);
+        virtual System::Void onPreCompileShader(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
+        virtual System::Void onPostCompileShader(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
+        virtual System::Void onShaderCompileFailed(System::UInt32 shaderType, System::Byte backendType, System::String^ defines);
     };
 
     class NativeMapObserver : public mbgl::MapObserver
@@ -135,7 +153,7 @@ namespace DOTNET_NAMESPACE
         void onDidFinishLoadingMap() override;
         void onDidFailLoadingMap(mbgl::MapLoadError type, const std::string& description) override;
         void onWillStartRenderingFrame() override;
-        void onDidFinishRenderingFrame(mbgl::MapObserver::RenderFrameStatus status) override;
+        void onDidFinishRenderingFrame(const mbgl::MapObserver::RenderFrameStatus& status) override;
         void onWillStartRenderingMap() override;
         void onDidFinishRenderingMap(mbgl::MapObserver::RenderMode mode) override;
         void onDidFinishLoadingStyle() override;
@@ -144,6 +162,9 @@ namespace DOTNET_NAMESPACE
         void onStyleImageMissing(const std::string& id) override;
         bool onCanRemoveUnusedStyleImage(const std::string& id) override;
         void onRegisterShaders(mbgl::gfx::ShaderRegistry& shaderRegistry) override;
+        void onPreCompileShader(mbgl::shaders::BuiltIn, mbgl::gfx::Backend::Type, const std::string&) override;
+        void onPostCompileShader(mbgl::shaders::BuiltIn, mbgl::gfx::Backend::Type, const std::string&) override;
+        void onShaderCompileFailed(mbgl::shaders::BuiltIn, mbgl::gfx::Backend::Type, const std::string&) override;
 
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::CameraWillChangeHandler^> CameraWillChangeHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::CameraIsChangingHandler^> CameraIsChangingHandler;
@@ -156,10 +177,13 @@ namespace DOTNET_NAMESPACE
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::WillStartRenderingMapHandler^> WillStartRenderingMapHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::DidFinishRenderingMapHandler^> DidFinishRenderingMapHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::DidFinishLoadingStyleHandler^> DidFinishLoadingStyleHandler;
-        //msclr::gcroot<DOTNET_NAMESPACE::MapObserver::SourceChangedHandler^> SourceChangedHandler;
+        msclr::gcroot<DOTNET_NAMESPACE::MapObserver::SourceChangedHandler^> SourceChangedHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::DidBecomeIdleHandler^> DidBecomeIdleHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::StyleImageMissingHandler^> StyleImageMissingHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::CanRemoveUnusedStyleImageHandler^> CanRemoveUnusedStyleImageHandler;
         msclr::gcroot<DOTNET_NAMESPACE::MapObserver::RegisterShadersHandler^> RegisterShadersHandler;
+        msclr::gcroot<DOTNET_NAMESPACE::MapObserver::PreCompileShaderHandler^> PreCompileShaderHandler;
+        msclr::gcroot<DOTNET_NAMESPACE::MapObserver::PostCompileShaderHandler^> PostCompileShaderHandler;
+        msclr::gcroot<DOTNET_NAMESPACE::MapObserver::ShaderCompileFailedHandler^> ShaderCompileFailedHandler;
     };
 }

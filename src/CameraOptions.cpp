@@ -32,6 +32,12 @@ namespace DOTNET_NAMESPACE
         return this;
     }
 
+    CameraOptions^ CameraOptions::WithCenterAltitude(System::Nullable<System::Double> o)
+    {
+        NativePointer->withCenterAltitude(o.HasValue ? std::optional<double>(o.Value) : std::nullopt);
+        return this;
+    }
+
     CameraOptions^ CameraOptions::WithPadding(EdgeInsets^ p)
     {
         if (p)
@@ -100,6 +106,54 @@ namespace DOTNET_NAMESPACE
         }
 
         return this;
+    }
+
+    CameraOptions^ CameraOptions::WithRoll(System::Nullable<System::Double> o)
+    {
+        NativePointer->withRoll(o.HasValue ? std::optional<double>(o.Value) : std::nullopt);
+        return this;
+    }
+
+    CameraOptions^ CameraOptions::WithFov(System::Nullable<System::Double> o)
+    {
+        NativePointer->withFov(o.HasValue ? std::optional<double>(o.Value) : std::nullopt);
+        return this;
+    }
+
+    System::Nullable<System::Double> CameraOptions::CenterAltitude::get()
+    {
+        if (NativePointer->centerAltitude.has_value())
+            return System::Nullable<System::Double>(NativePointer->centerAltitude.value());
+        return System::Nullable<System::Double>();
+    }
+
+    System::Void CameraOptions::CenterAltitude::set(System::Nullable<System::Double> value)
+    {
+        NativePointer->centerAltitude = value.HasValue ? std::optional<double>(value.Value) : std::nullopt;
+    }
+
+    System::Nullable<System::Double> CameraOptions::Roll::get()
+    {
+        if (NativePointer->roll.has_value())
+            return System::Nullable<System::Double>(NativePointer->roll.value());
+        return System::Nullable<System::Double>();
+    }
+
+    System::Void CameraOptions::Roll::set(System::Nullable<System::Double> value)
+    {
+        NativePointer->roll = value.HasValue ? std::optional<double>(value.Value) : std::nullopt;
+    }
+
+    System::Nullable<System::Double> CameraOptions::Fov::get()
+    {
+        if (NativePointer->fov.has_value())
+            return System::Nullable<System::Double>(NativePointer->fov.value());
+        return System::Nullable<System::Double>();
+    }
+
+    System::Void CameraOptions::Fov::set(System::Nullable<System::Double> value)
+    {
+        NativePointer->fov = value.HasValue ? std::optional<double>(value.Value) : std::nullopt;
     }
 
     LatLng^ CameraOptions::Center::get()

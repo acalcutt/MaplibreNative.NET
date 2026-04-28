@@ -374,6 +374,16 @@ namespace DOTNET_NAMESPACE
         NativePointer->setSize(*size->NativePointer);
     }
 
+    System::Void Map::SetFrustumOffset(EdgeInsets^ offset)
+    {
+        NativePointer->setFrustumOffset(*offset->NativePointer);
+    }
+
+    EdgeInsets^ Map::GetFrustumOffset()
+    {
+        return gcnew EdgeInsets(EdgeInsets::CreateNativePointerHolder(NativePointer->getFrustumOffset()));
+    }
+
     ScreenCoordinate Map::PixelForLatLng(LatLng^ latLng)
     {
         return ScreenCoordinate(NativePointer->pixelForLatLng(*latLng->NativePointer));
@@ -523,6 +533,66 @@ namespace DOTNET_NAMESPACE
     System::Boolean Map::IsFullyLoaded::get()
     {
         return NativePointer->isFullyLoaded();
+    }
+
+    System::Boolean Map::IsRenderingStatsViewEnabled::get()
+    {
+        return NativePointer->isRenderingStatsViewEnabled();
+    }
+
+    System::Void Map::IsRenderingStatsViewEnabled::set(System::Boolean value)
+    {
+        NativePointer->enableRenderingStatsView(value);
+    }
+
+    System::Double Map::TileLodMinRadius::get()
+    {
+        return NativePointer->getTileLodMinRadius();
+    }
+
+    System::Void Map::TileLodMinRadius::set(System::Double value)
+    {
+        NativePointer->setTileLodMinRadius(value);
+    }
+
+    System::Double Map::TileLodScale::get()
+    {
+        return NativePointer->getTileLodScale();
+    }
+
+    System::Void Map::TileLodScale::set(System::Double value)
+    {
+        NativePointer->setTileLodScale(value);
+    }
+
+    System::Double Map::TileLodPitchThreshold::get()
+    {
+        return NativePointer->getTileLodPitchThreshold();
+    }
+
+    System::Void Map::TileLodPitchThreshold::set(System::Double value)
+    {
+        NativePointer->setTileLodPitchThreshold(value);
+    }
+
+    System::Double Map::TileLodZoomShift::get()
+    {
+        return NativePointer->getTileLodZoomShift();
+    }
+
+    System::Void Map::TileLodZoomShift::set(System::Double value)
+    {
+        NativePointer->setTileLodZoomShift(value);
+    }
+
+    TileLodMode Map::TileLodMode_::get()
+    {
+        return (TileLodMode)NativePointer->getTileLodMode();
+    }
+
+    System::Void Map::TileLodMode_::set(TileLodMode value)
+    {
+        NativePointer->setTileLodMode((mbgl::TileLodMode)value);
     }
 
     FreeCameraOptions_^ Map::FreeCameraOptions::get()

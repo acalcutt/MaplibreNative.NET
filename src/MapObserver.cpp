@@ -2,6 +2,7 @@
 #include "ShaderRegistry.h"
 #include <mbgl/gfx/shader_registry.hpp>
 #include <mbgl/map/map_observer.hpp>
+#include <mbgl/style/source.hpp>
 
 namespace DOTNET_NAMESPACE
 {
@@ -19,11 +20,14 @@ namespace DOTNET_NAMESPACE
         NativePointer->WillStartRenderingMapHandler = gcnew WillStartRenderingMapHandler(this, &MapObserver::onWillStartRenderingMap);
         NativePointer->DidFinishRenderingMapHandler = gcnew DidFinishRenderingMapHandler(this, &MapObserver::onDidFinishRenderingMap);
         NativePointer->DidFinishLoadingStyleHandler = gcnew DidFinishLoadingStyleHandler(this, &MapObserver::onDidFinishLoadingStyle);
-        //NativePointer->SourceChangedHandler = gcnew SourceChangedHandler(this, &MapObserver::onSourceChanged);
+        NativePointer->SourceChangedHandler = gcnew SourceChangedHandler(this, &MapObserver::onSourceChanged);
         NativePointer->DidBecomeIdleHandler = gcnew DidBecomeIdleHandler(this, &MapObserver::onDidBecomeIdle);
         NativePointer->StyleImageMissingHandler = gcnew StyleImageMissingHandler(this, &MapObserver::onStyleImageMissing);
         NativePointer->CanRemoveUnusedStyleImageHandler = gcnew CanRemoveUnusedStyleImageHandler(this, &MapObserver::onCanRemoveUnusedStyleImage);
         NativePointer->RegisterShadersHandler = gcnew RegisterShadersHandler(this, &MapObserver::onRegisterShaders);
+        NativePointer->PreCompileShaderHandler = gcnew PreCompileShaderHandler(this, &MapObserver::onPreCompileShader);
+        NativePointer->PostCompileShaderHandler = gcnew PostCompileShaderHandler(this, &MapObserver::onPostCompileShader);
+        NativePointer->ShaderCompileFailedHandler = gcnew ShaderCompileFailedHandler(this, &MapObserver::onShaderCompileFailed);
     }
     
     MapObserver::~MapObserver()
@@ -85,13 +89,10 @@ namespace DOTNET_NAMESPACE
         DidFinishLoadingStyle();
     }
 
-    // TODO: implement the managed version
-    /*
-    System::Void MapObserver::onSourceChanged(Source^ source)
+    System::Void MapObserver::onSourceChanged(System::String^ id, SourceType type)
     {
-        SourceChanged(source);
+        SourceChanged(id, type);
     }
-    */
 
     System::Void MapObserver::onDidBecomeIdle()
     {
@@ -112,6 +113,21 @@ namespace DOTNET_NAMESPACE
     System::Void MapObserver::onRegisterShaders(ShaderRegistry^ shaderRegistry)
     {
         RegisterShaders(shaderRegistry);
+    }
+
+    System::Void MapObserver::onPreCompileShader(System::UInt32 shaderType, System::Byte backendType, System::String^ defines)
+    {
+        PreCompileShader(shaderType, backendType, defines);
+    }
+
+    System::Void MapObserver::onPostCompileShader(System::UInt32 shaderType, System::Byte backendType, System::String^ defines)
+    {
+        PostCompileShader(shaderType, backendType, defines);
+    }
+
+    System::Void MapObserver::onShaderCompileFailed(System::UInt32 shaderType, System::Byte backendType, System::String^ defines)
+    {
+        ShaderCompileFailed(shaderType, backendType, defines);
     }
 
     NativeMapObserver::NativeMapObserver()
@@ -178,7 +194,7 @@ namespace DOTNET_NAMESPACE
         }
     }
 
-    void NativeMapObserver::onDidFinishRenderingFrame(mbgl::MapObserver::RenderFrameStatus status)
+    void NativeMapObserver::onDidFinishRenderingFrame(const mbgl::MapObserver::RenderFrameStatus& status)
     {
         if (static_cast<DOTNET_NAMESPACE::MapObserver::DidFinishRenderingFrameHandler^>(DidFinishRenderingFrameHandler))
         {
@@ -219,12 +235,12 @@ namespace DOTNET_NAMESPACE
 
     void NativeMapObserver::onSourceChanged(mbgl::style::Source& source)
     {
-        /*
         if (static_cast<DOTNET_NAMESPACE::MapObserver::SourceChangedHandler^>(SourceChangedHandler))
         {
-            SourceChangedHandler->Invoke(gcnew Source(Source::CreateNativePointerHolder(source)));
+            SourceChangedHandler->Invoke(
+                Convert::ToSystemString(source.getID()),
+                (DOTNET_NAMESPACE::SourceType)source.getType());
         }
-        */
     }
 
     void NativeMapObserver::onDidBecomeIdle()
@@ -258,6 +274,30 @@ namespace DOTNET_NAMESPACE
         if (static_cast<DOTNET_NAMESPACE::MapObserver::RegisterShadersHandler^>(RegisterShadersHandler))
         {
             RegisterShadersHandler->Invoke(gcnew ShaderRegistry(ShaderRegistry::CreateNativePointerHolder(&shaderRegistry, false)));
+        }
+    }
+
+    void NativeMapObserver::onPreCompileShader(mbgl::shaders::BuiltIn type, mbgl::gfx::Backend::Type backend, const std::string& defines)
+    {
+        if (static_cast<DOTNET_NAMESPACE::MapObserver::PreCompileShaderHandler^>(PreCompileShaderHandler))
+        {
+            PreCompileShaderHandler->Invoke(static_cast<System::UInt32>(type), static_cast<System::Byte>(backend), Convert::ToSystemString(defines));
+        }
+    }
+
+    void NativeMapObserver::onPostCompileShader(mbgl::shaders::BuiltIn type, mbgl::gfx::Backend::Type backend, const std::string& defines)
+    {
+        if (static_cast<DOTNET_NAMESPACE::MapObserver::PostCompileShaderHandler^>(PostCompileShaderHandler))
+        {
+            PostCompileShaderHandler->Invoke(static_cast<System::UInt32>(type), static_cast<System::Byte>(backend), Convert::ToSystemString(defines));
+        }
+    }
+
+    void NativeMapObserver::onShaderCompileFailed(mbgl::shaders::BuiltIn type, mbgl::gfx::Backend::Type backend, const std::string& defines)
+    {
+        if (static_cast<DOTNET_NAMESPACE::MapObserver::ShaderCompileFailedHandler^>(ShaderCompileFailedHandler))
+        {
+            ShaderCompileFailedHandler->Invoke(static_cast<System::UInt32>(type), static_cast<System::Byte>(backend), Convert::ToSystemString(defines));
         }
     }
 }
