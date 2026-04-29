@@ -40,6 +40,14 @@ namespace
 
         callback->Invoke(exception);
     }
+
+    mbgl::Map::StillImageCallback MakeStillImageCallback(Map::StillImageCallback^ callback)
+    {
+        auto ref = msclr::gcroot<Map::StillImageCallback^>(callback);
+        return [ref](std::exception_ptr eptr) mutable {
+            StillImageCallbackHandler(eptr, ref);
+        };
+    }
 }
 
 namespace DOTNET_NAMESPACE
@@ -92,11 +100,7 @@ namespace DOTNET_NAMESPACE
 
     System::Void Map::RenderStill(StillImageCallback^ callback)
     {
-        NativePointer->renderStill(std::bind(
-            &StillImageCallbackHandler,
-            std::placeholders::_1,
-            msclr::gcroot<StillImageCallback^>(callback)
-        ));
+        NativePointer->renderStill(MakeStillImageCallback(callback));
     }
 
     System::Void Map::RenderStill(CameraOptions^ camera, MapDebugOptions debugOptions, StillImageCallback^ callback)
@@ -104,11 +108,7 @@ namespace DOTNET_NAMESPACE
         NativePointer->renderStill(
             *camera->NativePointer,
             (mbgl::MapDebugOptions)debugOptions,
-            std::bind(
-                &StillImageCallbackHandler,
-                std::placeholders::_1,
-                msclr::gcroot<StillImageCallback^>(callback)
-            )
+            MakeStillImageCallback(callback)
         );
     }
 

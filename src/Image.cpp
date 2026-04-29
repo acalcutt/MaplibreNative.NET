@@ -9,7 +9,7 @@ namespace DOTNET_NAMESPACE
     template <typename T>
     T^ ImageBase<Mode>::Clone()
     {
-        return gcnew T(T::CreateNativePointerHolder(NativePointer->clone()));
+        return gcnew T(T::CreateNativePointerHolder(this->NativePointer->clone()));
     }
 
     template <ImageAlphaMode Mode>
