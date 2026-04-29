@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <msclr/marshal_cppstd.h>
+#using <mscorlib.dll>
 
 namespace
 {
