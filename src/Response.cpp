@@ -98,7 +98,7 @@ namespace DOTNET_NAMESPACE
     {
         if (value)
         {
-            NativePointer->data = std::shared_ptr<const std::string>(&Convert::ToStdString(value));
+            NativePointer->data = std::make_shared<const std::string>(Convert::ToStdString(value));
         }
         else
         {

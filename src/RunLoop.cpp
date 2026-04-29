@@ -31,9 +31,12 @@ namespace DOTNET_NAMESPACE
 }
 
 #pragma managed(push, off)
+#pragma warning(push)
+#pragma warning(disable: 5308)
 #undef _M_CEE
 #include <mbgl/util/run_loop.hpp>
 #define _M_CEE
+#pragma warning(pop)
 
 namespace DOTNET_NAMESPACE
 {
