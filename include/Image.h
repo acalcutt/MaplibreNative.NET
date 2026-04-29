@@ -57,19 +57,19 @@ namespace DOTNET_NAMESPACE
 
         System::Void Fill(System::Byte value)
         {
-            NativePointer->fill(value);
+            this->NativePointer->fill(value);
         }
 
         System::Void Resize(Size_^ size)
         {
-            NativePointer->resize(*size->NativePointer);
+            this->NativePointer->resize(*size->NativePointer);
         }
 
         cli::array<System::Byte>^ GetData()
         {
-            cli::array<System::Byte>^ result = gcnew cli::array<System::Byte>(static_cast<System::Int32>(NativePointer->bytes()));
+            cli::array<System::Byte>^ result = gcnew cli::array<System::Byte>(static_cast<System::Int32>(this->NativePointer->bytes()));
 
-            System::Runtime::InteropServices::Marshal::Copy(System::IntPtr(NativePointer->data.get()), result, 0, result->Length);
+            System::Runtime::InteropServices::Marshal::Copy(System::IntPtr(this->NativePointer->data.get()), result, 0, result->Length);
             
             return result;
         }
@@ -78,7 +78,7 @@ namespace DOTNET_NAMESPACE
         {
             System::IntPtr get()
             {
-                return System::IntPtr(NativePointer->data.get());
+                return System::IntPtr(this->NativePointer->data.get());
             }
         }
 
@@ -86,7 +86,7 @@ namespace DOTNET_NAMESPACE
         {
             System::Boolean get()
             {
-                return NativePointer->valid();
+                return this->NativePointer->valid();
             }
         }
 
@@ -94,7 +94,7 @@ namespace DOTNET_NAMESPACE
         {
             System::UInt64 get()
             {
-                return NativePointer->stride();
+                return this->NativePointer->stride();
             }
         }
 
@@ -102,7 +102,7 @@ namespace DOTNET_NAMESPACE
         {
             System::UInt64 get()
             {
-                return NativePointer->bytes();
+                return this->NativePointer->bytes();
             }
         }
 
@@ -110,7 +110,7 @@ namespace DOTNET_NAMESPACE
         {
             Size_^ get()
             {
-                return gcnew Size_(Size_::CreateNativePointerHolder(NativePointer->size));
+                return gcnew Size_(Size_::CreateNativePointerHolder(this->NativePointer->size));
             }
         }
 
@@ -118,18 +118,18 @@ namespace DOTNET_NAMESPACE
         {
             System::Int64 get()
             {
-                return NativePointer->channels;
+                return this->NativePointer->channels;
             }
         }
 
         System::Boolean operator==(ImageBase<Mode>^ rhs)
         {
-            return *NativePointer == *rhs->NativePointer;
+            return *this->NativePointer == *rhs->NativePointer;
         }
 
         System::Boolean operator!=(ImageBase<Mode>^ rhs)
         {
-            return *NativePointer != *rhs->NativePointer;
+            return *this->NativePointer != *rhs->NativePointer;
         }
 
         /// <summary>
