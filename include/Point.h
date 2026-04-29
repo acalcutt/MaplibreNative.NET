@@ -11,7 +11,7 @@ namespace DOTNET_NAMESPACE
             Y = y;
         }
 
-        PointDouble(mbgl::Point<double>& point)
+        PointDouble(const mbgl::Point<double>& point)
         {
             X = point.x;
             Y = point.y;

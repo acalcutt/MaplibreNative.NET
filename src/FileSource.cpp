@@ -9,21 +9,6 @@
 #include <mbgl/util/async_request.hpp>
 #include <mbgl/storage/file_source.hpp>
 
-namespace
-{
-    using namespace ::DOTNET_NAMESPACE;
-    
-    void RequestCallback(mbgl::Response response, FileSource::Callback^ callback)
-    {
-        callback->Invoke(gcnew Response(Response::CreateNativePointerHolder(response)));
-    }
-
-    void ForwardCallback(System::Action^ callback)
-    {
-        callback->Invoke();
-    }
-}
-
 namespace DOTNET_NAMESPACE
 {
     FileSource::FileSource(NativePointerHolder<std::shared_ptr<mbgl::FileSource>>^ nativePointerHolder) : NativeWrapper(nativePointerHolder)
@@ -41,11 +26,14 @@ namespace DOTNET_NAMESPACE
 
     AsyncRequest^ FileSource::Request(Resource^ resource, Callback^ callback)
     {
+        auto callbackRef = msclr::gcroot<Callback^>(callback);
         return gcnew AsyncRequest(
             AsyncRequest::CreateNativePointerHolder(
                 NativePointer->get()->request(
                     *resource->NativePointer,
-                    std::bind(&RequestCallback, std::placeholders::_1, msclr::gcroot<Callback^>(callback))
+                    [callbackRef](mbgl::Response response) mutable {
+                        callbackRef->Invoke(gcnew Response(Response::CreateNativePointerHolder(response)));
+                    }
                 )
                 .release()
             )
@@ -54,10 +42,13 @@ namespace DOTNET_NAMESPACE
 
     System::Void FileSource::Forward(Resource^ resource, Response^ response, System::Action^ callback)
     {
+        auto callbackRef = msclr::gcroot<System::Action^>(callback);
         NativePointer->get()->forward(
             *resource->NativePointer,
             *response->NativePointer,
-            std::bind(&ForwardCallback, msclr::gcroot<System::Action^>(callback))
+            [callbackRef]() mutable {
+                callbackRef->Invoke();
+            }
         );
     }
 

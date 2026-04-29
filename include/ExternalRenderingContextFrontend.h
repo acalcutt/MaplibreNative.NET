@@ -1,6 +1,7 @@
 #pragma once
 #include "NativeWrapper.h"
 #include "RendererFrontend.h"
+#include <mbgl/actor/scheduler.hpp>
 #include <mbgl/renderer/renderer_frontend.hpp>
 #include <algorithm>
 #include <msclr/gcroot.h>
@@ -66,6 +67,7 @@ namespace DOTNET_NAMESPACE
         void setObserver(mbgl::RendererObserver& observer) override;
         void update(std::shared_ptr<mbgl::UpdateParameters> parameters) override;
         void update(std::shared_ptr<mbgl::UpdateParameters> parameters, bool callUpdatedHandler);
+        const mbgl::TaggedScheduler& getThreadPool() const override { return _Backend->getThreadPool(); }
         void render();
         NativeExternalRenderingContextBackend* getBackend();
         mbgl::Renderer* getRenderer();
