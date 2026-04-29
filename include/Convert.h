@@ -6,7 +6,6 @@
 #include <memory>
 #include <string>
 #include <msclr/marshal_cppstd.h>
-#using <mscorlib.dll>
 
 namespace
 {
@@ -58,11 +57,11 @@ namespace DOTNET_NAMESPACE
         }
 
         template <typename Duration>
-        static std::chrono::time_point<std::chrono::system_clock, Duration> ToTimePoint(System::DateTime^ dateTime)
+        static std::chrono::time_point<std::chrono::system_clock, Duration> ToTimePoint(System::DateTime dateTime)
         {
             return std::chrono::time_point_cast<Duration>(
                 std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>(
-                    std::chrono::nanoseconds((dateTime->Ticks - epochTicks) * 100)
+                    std::chrono::nanoseconds((dateTime.Ticks - epochTicks) * 100)
                     )
                 );
         }
