@@ -9,6 +9,29 @@
 #include <mbgl/util/async_request.hpp>
 #include <mbgl/storage/file_source.hpp>
 
+// Free helper functions — lambdas are only forbidden inside managed class
+// member functions (C3923), not inside regular free functions.
+namespace
+{
+    using namespace ::DOTNET_NAMESPACE;
+
+    mbgl::FileSource::Callback MakeRequestCallback(FileSource::Callback^ callback)
+    {
+        auto ref = msclr::gcroot<FileSource::Callback^>(callback);
+        return [ref](mbgl::Response response) mutable {
+            ref->Invoke(gcnew Response(Response::CreateNativePointerHolder(response)));
+        };
+    }
+
+    std::function<void()> MakeForwardCallback(System::Action^ callback)
+    {
+        auto ref = msclr::gcroot<System::Action^>(callback);
+        return [ref]() mutable {
+            ref->Invoke();
+        };
+    }
+}
+
 namespace DOTNET_NAMESPACE
 {
     FileSource::FileSource(NativePointerHolder<std::shared_ptr<mbgl::FileSource>>^ nativePointerHolder) : NativeWrapper(nativePointerHolder)
@@ -26,14 +49,11 @@ namespace DOTNET_NAMESPACE
 
     AsyncRequest^ FileSource::Request(Resource^ resource, Callback^ callback)
     {
-        auto callbackRef = msclr::gcroot<Callback^>(callback);
         return gcnew AsyncRequest(
             AsyncRequest::CreateNativePointerHolder(
                 NativePointer->get()->request(
                     *resource->NativePointer,
-                    [callbackRef](mbgl::Response response) mutable {
-                        callbackRef->Invoke(gcnew Response(Response::CreateNativePointerHolder(response)));
-                    }
+                    MakeRequestCallback(callback)
                 )
                 .release()
             )
@@ -42,13 +62,10 @@ namespace DOTNET_NAMESPACE
 
     System::Void FileSource::Forward(Resource^ resource, Response^ response, System::Action^ callback)
     {
-        auto callbackRef = msclr::gcroot<System::Action^>(callback);
         NativePointer->get()->forward(
             *resource->NativePointer,
             *response->NativePointer,
-            [callbackRef]() mutable {
-                callbackRef->Invoke();
-            }
+            MakeForwardCallback(callback)
         );
     }
 
