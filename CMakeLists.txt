@@ -5,7 +5,7 @@ set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/dependencies/maplibre-native/
 set(MAPLIBRE_NET_VERSION "1.0.0")
 project("MaplibreNative.NET" LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 if(NOT MSVC)
 	return()
