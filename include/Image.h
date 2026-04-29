@@ -36,15 +36,15 @@ namespace DOTNET_NAMESPACE
     public ref class ImageBase : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>
     {
     public:
-        ImageBase() : NativeWrapper(CreateImage())
+        ImageBase() : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(CreateImage())
         {
         }
 
-        ImageBase(Size_^ size) : NativeWrapper(CreateImage(size))
+        ImageBase(Size_^ size) : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(CreateImage(size))
         {
         }
         
-        ImageBase(Size_^ size, cli::array<System::Byte>^ srcData) : NativeWrapper(CreateImage(size, srcData))
+        ImageBase(Size_^ size, cli::array<System::Byte>^ srcData) : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(CreateImage(size, srcData))
         {
         }
         
@@ -162,7 +162,7 @@ namespace DOTNET_NAMESPACE
         template <typename T = ImageAlphaModeToType<Mode>::Type>
         static System::Void Copy(T^ srcImg, T^ dstImg, PointUInt srcPt, PointUInt dstPt, Size_^ size);
     internal:
-        ImageBase(NativePointerHolder<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>^ nativePointerHolder) : NativeWrapper(nativePointerHolder)
+        ImageBase(NativePointerHolder<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>^ nativePointerHolder) : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(nativePointerHolder)
         {
         }
     private:
