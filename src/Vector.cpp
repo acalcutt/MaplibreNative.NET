@@ -92,12 +92,14 @@ namespace DOTNET_NAMESPACE
 
     System::Collections::Generic::IEnumerator<System::Double>^ Vec3::GetEnumerator()
     {
-        return gcnew VectorEnumerator<mbgl::vec3>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::vec3>(&begin, &end);
     }
 
     System::Collections::IEnumerator^ Vec3::GetEnumeratorObject()
     {
-        return gcnew VectorEnumerator<mbgl::vec3>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::vec3>(&begin, &end);
     }
 
     System::Double Vec3::default::get(System::Int32 index)
@@ -139,12 +141,14 @@ namespace DOTNET_NAMESPACE
 
     System::Collections::Generic::IEnumerator<System::Double>^ Vec4::GetEnumerator()
     {
-        return gcnew VectorEnumerator<mbgl::vec4>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::vec4>(&begin, &end);
     }
 
     System::Collections::IEnumerator^ Vec4::GetEnumeratorObject()
     {
-        return gcnew VectorEnumerator<mbgl::vec4>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::vec4>(&begin, &end);
     }
 
     System::Double Vec4::default::get(System::Int32 index)
@@ -201,12 +205,14 @@ namespace DOTNET_NAMESPACE
 
     System::Collections::Generic::IEnumerator<System::Double>^ Mat4::GetEnumerator()
     {
-        return gcnew VectorEnumerator<mbgl::mat4>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::mat4>(&begin, &end);
     }
 
     System::Collections::IEnumerator^ Mat4::GetEnumeratorObject()
     {
-        return gcnew VectorEnumerator<mbgl::mat4>(&NativePointer->begin(), &NativePointer->end());
+        auto begin = NativePointer->begin(); auto end = NativePointer->end();
+        return gcnew VectorEnumerator<mbgl::mat4>(&begin, &end);
     }
 
     System::Double Mat4::default::get(System::Int32 index)
