@@ -18,8 +18,8 @@ set(ASSEMBLY_NAME "MaplibreNative.NET")
 set_target_properties(
 	mbgl-dotnet
 	PROPERTIES
-		COMMON_LANGUAGE_RUNTIME ""
-		VS_GLOBAL_CLRSupport "true"
+		COMMON_LANGUAGE_RUNTIME "NetCore"
+		VS_GLOBAL_CLRSupport "NetCore"
 		OUTPUT_NAME ${ASSEMBLY_NAME}
 )
 
