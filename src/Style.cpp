@@ -1,11 +1,12 @@
 #include "Convert.h"
 #include "FileSource.h"
 #include "Style.h"
+#include <mbgl/actor/scheduler.hpp>
 #include <mbgl/style/style.hpp>
 
 namespace DOTNET_NAMESPACE
 {
-    Style::Style(FileSource^ fileSource, System::Single pixelRatio) : NativeWrapper(new mbgl::style::Style(*fileSource->NativePointer, pixelRatio))
+    Style::Style(FileSource^ fileSource, System::Single pixelRatio) : NativeWrapper(new mbgl::style::Style(*fileSource->NativePointer, pixelRatio, mbgl::TaggedScheduler{mbgl::Scheduler::GetBackground(), {}}))
     {
     }
 

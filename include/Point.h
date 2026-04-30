@@ -130,7 +130,7 @@ namespace DOTNET_NAMESPACE
             Y = y;
         }
 
-        PointShort(mbgl::Point<int16_t>& point)
+        PointShort(const mbgl::Point<int16_t>& point)
         {
             X = point.x;
             Y = point.y;
