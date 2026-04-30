@@ -20,6 +20,7 @@ set_target_properties(
 	PROPERTIES
 		COMMON_LANGUAGE_RUNTIME "NetCore"
 		VS_GLOBAL_CLRSupport "NetCore"
+		ENABLE_EXPORTS ON
 		OUTPUT_NAME ${ASSEMBLY_NAME}
 )
 
@@ -38,7 +39,7 @@ if(CMAKE_GENERATOR STREQUAL "Ninja")
 
 	string(REPLACE "/RTC1" "" CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG})
 	string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-	target_compile_options(mbgl-dotnet PRIVATE "/clr" "/EHa")
+	target_compile_options(mbgl-dotnet PRIVATE "/clr:netcore" "/EHa")
 
 	add_custom_command(
 		TARGET mbgl-dotnet
