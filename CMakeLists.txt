@@ -20,6 +20,7 @@ set_target_properties(
 	PROPERTIES
 		COMMON_LANGUAGE_RUNTIME "NetCore"
 		VS_GLOBAL_CLRSupport "NetCore"
+		VS_GLOBAL_TargetFramework "net8.0"
 		OUTPUT_NAME ${ASSEMBLY_NAME}
 )
 
