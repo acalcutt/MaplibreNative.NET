@@ -71,6 +71,7 @@ target_sources(
 	${PROJECT_SOURCE_DIR}/src/LatLng.cpp
 	${PROJECT_SOURCE_DIR}/src/Map.cpp
 	${PROJECT_SOURCE_DIR}/src/MapObserver.cpp
+        ${PROJECT_SOURCE_DIR}/src/MapLibreLogger.cpp
 	${PROJECT_SOURCE_DIR}/src/MapOptions.cpp
 	${PROJECT_SOURCE_DIR}/src/OverscaledTileID.cpp
 	${PROJECT_SOURCE_DIR}/src/PremultipliedImage.cpp
