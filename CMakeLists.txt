@@ -41,6 +41,39 @@ if(CMAKE_GENERATOR STREQUAL "Ninja")
 	string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 	target_compile_options(mbgl-dotnet PRIVATE "/clr:netcore" "/EHa")
 
+	# With Ninja, MSVC doesn't auto-configure the .NET Core assembly search path
+	# (unlike the VS generator). Explicitly add /AI pointing to the .NET reference
+	# assemblies so the compiler finds the correct System.Runtime.dll instead of
+	# the .NET Framework 4.x one from C:\Windows\Microsoft.NET\Framework64\.
+	find_program(_DOTNET_EXE dotnet)
+	if(_DOTNET_EXE)
+		execute_process(
+			COMMAND "${_DOTNET_EXE}" --version
+			OUTPUT_VARIABLE _DOTNET_VER
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_QUIET
+		)
+		string(REGEX MATCH "^[0-9]+" _DOTNET_MAJ "${_DOTNET_VER}")
+		file(GLOB _NETREF_CANDIDATES
+			"C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/${_DOTNET_MAJ}.*/ref/net${_DOTNET_MAJ}.0"
+		)
+		if(_NETREF_CANDIDATES)
+			list(SORT _NETREF_CANDIDATES ORDER DESCENDING)
+			list(GET _NETREF_CANDIDATES 0 _NETREF_DIR)
+			file(TO_NATIVE_PATH "${_NETREF_DIR}" _NETREF_DIR_NATIVE)
+			target_compile_options(mbgl-dotnet PRIVATE "/AI${_NETREF_DIR_NATIVE}")
+			message(STATUS "Using .NET reference assemblies: ${_NETREF_DIR_NATIVE}")
+		else()
+			message(WARNING "Could not find .NET Core reference assemblies for /clr:netcore — compile will likely fail with C5275")
+		endif()
+		unset(_NETREF_CANDIDATES)
+		unset(_NETREF_DIR)
+		unset(_NETREF_DIR_NATIVE)
+		unset(_DOTNET_VER)
+		unset(_DOTNET_MAJ)
+	endif()
+	unset(_DOTNET_EXE)
+
 	add_custom_command(
 		TARGET mbgl-dotnet
 		POST_BUILD
