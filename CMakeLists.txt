@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/dependencies/maplibre-native/platform/windows/custom-toolchain.cmake)
 
-set(MAPLIBRE_NET_VERSION "1.0.0")
+set(MAPLIBRE_NET_VERSION "1.0.1")
 project("MaplibreNative.NET" LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
