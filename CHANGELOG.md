@@ -7,3 +7,8 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+## 1.0.2
+### ✨ Features and improvements
+
+### 🐞 Bug fixes
+
