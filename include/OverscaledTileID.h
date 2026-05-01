@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -10,7 +10,7 @@ namespace DOTNET_NAMESPACE
 {
     ref class CanonicalTileID;
     ref class UnwrappedTileID;
-    
+
     /// <summary>
     /// Has integer z/x/y coordinates
     /// overscaledZ describes the zoom level this tile is intented to represent, e.g.

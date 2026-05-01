@@ -1,4 +1,4 @@
-#include "MapObserver.h"
+﻿#include "MapObserver.h"
 #include "ShaderRegistry.h"
 #include <mbgl/gfx/shader_registry.hpp>
 #include <mbgl/map/map_observer.hpp>
@@ -29,7 +29,7 @@ namespace DOTNET_NAMESPACE
         NativePointer->PostCompileShaderHandler = gcnew PostCompileShaderHandler(this, &MapObserver::onPostCompileShader);
         NativePointer->ShaderCompileFailedHandler = gcnew ShaderCompileFailedHandler(this, &MapObserver::onShaderCompileFailed);
     }
-    
+
     MapObserver::~MapObserver()
     {
     }

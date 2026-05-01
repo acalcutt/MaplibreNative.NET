@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include "Resource.h"
 #include <mbgl/storage/resource_transform.hpp>
@@ -10,7 +10,7 @@ namespace DOTNET_NAMESPACE
 {
     public delegate System::Void ResourceTransformFinishedCallback(System::String^ url);
     public delegate System::Void ResourceTransformCallback(Resource::ResourceKind kind, System::String^ url, ResourceTransformFinishedCallback^ finishedCallback);
-    
+
     class ResourceTransformNativeCallbackHelper;
 
     public ref class ResourceTransform : NativeWrapper<mbgl::ResourceTransform>
@@ -36,7 +36,7 @@ namespace DOTNET_NAMESPACE
         ~ResourceTransformNativeCallbackHelper();
 
         void NativeTransformCallbackHandler(mbgl::Resource::Kind kind, const std::string& url, mbgl::ResourceTransform::FinishedCallback callback);
-        
+
         mbgl::ResourceTransform::FinishedCallback FinishedCallback;
     private:
         msclr::gcroot<ResourceTransform^> _ResourceTransform;

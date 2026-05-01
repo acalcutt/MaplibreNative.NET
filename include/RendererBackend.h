@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -12,7 +12,7 @@ namespace mbgl
 namespace DOTNET_NAMESPACE
 {
     ref class RendererBackend;
-    
+
     public interface class IRendererBackend
     {
         System::IntPtr GetNativePointer();

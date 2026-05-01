@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Convert.h"
 #include "NativeWrapper.h"
 #include "Size.h"
@@ -43,11 +43,11 @@ namespace DOTNET_NAMESPACE
         ImageBase(Size_^ size) : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(CreateImage(size))
         {
         }
-        
+
         ImageBase(Size_^ size, cli::array<System::Byte>^ srcData) : NativeWrapper<mbgl::Image<(mbgl::ImageAlphaMode)Mode>>(CreateImage(size, srcData))
         {
         }
-        
+
         virtual ~ImageBase()
         {
         }
@@ -70,7 +70,7 @@ namespace DOTNET_NAMESPACE
             cli::array<System::Byte>^ result = gcnew cli::array<System::Byte>(static_cast<System::Int32>(this->NativePointer->bytes()));
 
             System::Runtime::InteropServices::Marshal::Copy(System::IntPtr(this->NativePointer->data.get()), result, 0, result->Length);
-            
+
             return result;
         }
 

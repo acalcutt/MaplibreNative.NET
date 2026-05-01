@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -12,7 +12,7 @@ namespace DOTNET_NAMESPACE
 {
     ref class CanonicalTileID;
     ref class UnwrappedTileID;
-    
+
     public ref class LatLng : NativeWrapper<mbgl::LatLng>
     {
     public:

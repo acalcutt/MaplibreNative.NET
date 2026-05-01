@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Enums.h"
 #include "LatLng.h"
 #include "NativeWrapper.h"
@@ -29,7 +29,7 @@ namespace DOTNET_NAMESPACE
     using NorthOrientation_ = NorthOrientation;
     using Size_ = Size;
     using ViewportMode_ = ViewportMode;
-    
+
     public ref class TransformStateProperties : NativeWrapper<mbgl::TransformStateProperties>
     {
     public:

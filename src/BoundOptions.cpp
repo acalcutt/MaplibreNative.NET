@@ -1,4 +1,4 @@
-#include "BoundOptions.h"
+﻿#include "BoundOptions.h"
 #include "LatLng.h"
 #include <mbgl/map/bound_options.hpp>
 
@@ -52,7 +52,7 @@ namespace DOTNET_NAMESPACE
         {
             return gcnew LatLngBounds(LatLngBounds::CreateNativePointerHolder(NativePointer->bounds.value()));
         }
-        
+
         return nullptr;
     }
 

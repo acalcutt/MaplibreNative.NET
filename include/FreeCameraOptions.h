@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -33,7 +33,7 @@ namespace DOTNET_NAMESPACE
         /// <param name="location"></param>
         /// <returns></returns>
         System::Void LookAtPoint(LatLng^ location);
-        
+
         /// <summary>
         /// Helper function for setting orientation of the camera by defining a
         /// focus point on the map. Up vector is required in certain scenarios where
@@ -69,7 +69,7 @@ namespace DOTNET_NAMESPACE
         /// The default pose of the camera is such that the forward vector is
         /// looking up the -Z axis and the up vector is aligned with north
         /// orientation of the map: forward [0, 0, -1], up [0, -1, 0], right [1, 0, 0]
-        /// 
+        ///
         ///  Orientation can be set freely but certain constraints still apply
         ///   - Pitch has an upper limit
         /// </summary>

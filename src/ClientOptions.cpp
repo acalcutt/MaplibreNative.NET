@@ -1,4 +1,4 @@
-#include "Convert.h"
+﻿#include "Convert.h"
 #include "ClientOptions.h"
 #include <mbgl/util/client_options.hpp>
 
@@ -31,7 +31,7 @@ namespace DOTNET_NAMESPACE
     ClientOptions^ ClientOptions::WithVersion(System::String^ version)
     {
         NativePointer->withVersion(Convert::ToStdString(version));
-        
+
         return this;
     }
 

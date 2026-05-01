@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -39,7 +39,7 @@ namespace DOTNET_NAMESPACE
         /// <param name="z"></param>
         /// <returns></returns>
         BoundOptions^ WithMaxZoom(System::Double z);
-        
+
         /// <summary>
         /// Sets the minimum pitch
         /// </summary>

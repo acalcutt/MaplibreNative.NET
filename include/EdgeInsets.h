@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include "Point.h"
 
@@ -47,7 +47,7 @@ namespace DOTNET_NAMESPACE
 
         System::Void operator+=(EdgeInsets^ o);
         EdgeInsets^ operator+(EdgeInsets^ o);
-        
+
         static System::Boolean operator==(EdgeInsets^ a, EdgeInsets^ b);
         static System::Boolean operator!=(EdgeInsets^ a, EdgeInsets^ b);
     internal:

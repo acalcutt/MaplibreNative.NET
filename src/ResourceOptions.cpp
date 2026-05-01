@@ -1,4 +1,4 @@
-#include "Convert.h"
+﻿#include "Convert.h"
 #include "ResourceOptions.h"
 #include <mbgl/storage/resource_options.hpp>
 
@@ -24,7 +24,7 @@ namespace DOTNET_NAMESPACE
     ResourceOptions^ ResourceOptions::WithApiKey(System::String^ token)
     {
         NativePointer->withApiKey(Convert::ToStdString(token));
-        
+
         return this;
     }
 
@@ -48,21 +48,21 @@ namespace DOTNET_NAMESPACE
     ResourceOptions^ ResourceOptions::WithAssetPath(System::String^ path)
     {
         NativePointer->withAssetPath(Convert::ToStdString(path));
-        
+
         return this;
     }
 
     ResourceOptions^ ResourceOptions::WithMaximumCacheSize(System::UInt64 size)
     {
         NativePointer->withMaximumCacheSize(size);
-        
+
         return this;
     }
 
     ResourceOptions^ ResourceOptions::WithPlatformContext(System::IntPtr context)
     {
         NativePointer->withPlatformContext(context.ToPointer());
-        
+
         return this;
     }
 

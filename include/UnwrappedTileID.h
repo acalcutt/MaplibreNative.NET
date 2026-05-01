@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -10,7 +10,7 @@ namespace DOTNET_NAMESPACE
 {
     ref class CanonicalTileID;
     ref class OverscaledTileID;
-    
+
     /// <summary>
     /// Has integer z/x/y coordinates
     /// wrap describes tiles that are left/right of the main tile pyramid, e.g. when

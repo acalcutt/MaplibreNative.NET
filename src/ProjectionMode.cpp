@@ -1,4 +1,4 @@
-#include "ProjectionMode.h"
+﻿#include "ProjectionMode.h"
 #include <mbgl/map/projection_mode.hpp>
 
 namespace DOTNET_NAMESPACE
@@ -61,7 +61,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Double>(NativePointer->xSkew.value());
         }
-        
+
         return System::Nullable<System::Double>();
     }
 

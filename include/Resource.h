@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include <mbgl/storage/resource.hpp>
 
 namespace DOTNET_NAMESPACE
 {
     using FontStack = System::Collections::Generic::IEnumerable<System::String^>;
-    
+
     public ref class Resource : NativeWrapper<mbgl::Resource>
     {
     public:
@@ -69,7 +69,7 @@ namespace DOTNET_NAMESPACE
 
         static Resource^ Style(System::String^ url);
         static Resource^ Source(System::String^ url);
-        
+
         static Resource^ Tile(
             System::String^ urlTemplate,
             System::Single pixelRatio,

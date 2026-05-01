@@ -1,4 +1,4 @@
-#include "Convert.h"
+﻿#include "Convert.h"
 #include "Value.h"
 #include <mapbox/compatibility/value.hpp>
 
@@ -102,7 +102,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Int64>(*value);
         }
-        
+
         return System::Nullable<System::Int64>();
     }
 
@@ -112,7 +112,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::UInt64>(*value);
         }
-        
+
         return System::Nullable<System::UInt64>();
     }
 
@@ -122,7 +122,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Boolean>(*value);
         }
-        
+
         return System::Nullable<System::Boolean>();
     }
 
@@ -132,7 +132,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Double>(*value);
         }
-        
+
         return System::Nullable<System::Double>();
     }
 

@@ -1,4 +1,4 @@
-#include "AnimationOptions.h"
+﻿#include "AnimationOptions.h"
 #include "Convert.h"
 #include "UnitBezier.h"
 #include <mbgl/map/camera.hpp>
@@ -49,7 +49,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Double>(NativePointer->velocity.value());
         }
-        
+
         return System::Nullable<System::Double>();
     }
 

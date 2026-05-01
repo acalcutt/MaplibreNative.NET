@@ -1,4 +1,4 @@
-#include "Convert.h"
+﻿#include "Convert.h"
 #include "Response.h"
 #include <mbgl/storage/response.hpp>
 
@@ -36,7 +36,7 @@ namespace DOTNET_NAMESPACE
         {
             _Error = nullptr;
         }
-        
+
         return _Error;
     }
 
@@ -90,7 +90,7 @@ namespace DOTNET_NAMESPACE
         {
             return Convert::ToSystemArray<uint8_t, System::Byte>(reinterpret_cast<uint8_t*>(const_cast<char*>(NativePointer->data->data())), static_cast<System::Int32>(NativePointer->data->size()));
         }
-        
+
         return nullptr;
     }
 
@@ -177,7 +177,7 @@ namespace DOTNET_NAMESPACE
             (mbgl::Response::Error::Reason)reason,
             message
                 ?
-                Convert::ToStdString(message) 
+                Convert::ToStdString(message)
                 :
                 std::string(),
             retryAfter.HasValue

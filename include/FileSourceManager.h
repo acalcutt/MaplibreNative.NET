@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace DOTNET_NAMESPACE
@@ -6,12 +6,12 @@ namespace DOTNET_NAMESPACE
     ref class ClientOptions;
     ref class FileSource;
     ref class ResourceOptions;
-    
+
     /// <summary>
     /// A singleton class responsible for managing file sources.
-    /// 
+    ///
     /// The FileSourceManager provides following functionality:
-    /// 
+    ///
     /// - provides access to file sources of a specific type and configuration
     /// - caches previously created file sources of a (type, configuration) tuples
     /// </summary>

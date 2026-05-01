@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include <mbgl/util/vectors.hpp>
 #include <mbgl/util/mat4.hpp>
@@ -6,7 +6,7 @@
 namespace DOTNET_NAMESPACE
 {
     ref class Mat4;
-    
+
     public ref class Vec3 : NativeWrapper<mbgl::vec3>, System::Collections::Generic::IReadOnlyList<System::Double>
     {
     public:

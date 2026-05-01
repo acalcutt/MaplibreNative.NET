@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include <algorithm>
 #include <memory>
@@ -22,7 +22,7 @@ namespace DOTNET_NAMESPACE
 
     using ClientOptions_ = ClientOptions;
     using ResourceOptions_ = ResourceOptions;
-    
+
     public ref class FileSource : NativeWrapper<std::shared_ptr<mbgl::FileSource>>
     {
     public:
@@ -30,7 +30,7 @@ namespace DOTNET_NAMESPACE
 
         ~FileSource();
         !FileSource();
-        
+
         /// <summary>
         /// Request a resource. The callback will be called asynchronously, in the
         /// same thread as the request was made. This thread must have an active
@@ -73,7 +73,7 @@ namespace DOTNET_NAMESPACE
 
         /// <summary>
         /// Pause file request activity.
-        /// 
+        ///
         /// If pause is called then no revalidation or network request activity
         /// will occur.
         /// </summary>
@@ -82,7 +82,7 @@ namespace DOTNET_NAMESPACE
 
         /// <summary>
         /// Resume file request activity.
-        /// 
+        ///
         /// Calling resume will unpause the file source and process any tasks that
         /// expired while the file source was paused.
         /// </summary>

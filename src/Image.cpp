@@ -1,4 +1,4 @@
-#include "Image.h"
+﻿#include "Image.h"
 #include "AlphaImage.h"
 #include "PremultipliedImage.h"
 #include "UnassociatedImage.h"
@@ -39,11 +39,11 @@ namespace DOTNET_NAMESPACE
     template AlphaImage^ BaseAlphaImage::Clone();
     template System::Void BaseAlphaImage::Clear(AlphaImage^ dstImg, PointUInt pt, Size_^ size);
     template System::Void BaseAlphaImage::Copy(AlphaImage^ srcImg, AlphaImage^ dstImg, PointUInt srcPt, PointUInt dstPt, Size_^ size);
-    
+
     template PremultipliedImage^ BasePremultipliedImage::Clone();
     template System::Void BasePremultipliedImage::Clear(PremultipliedImage^ dstImg, PointUInt pt, Size_^ size);
     template System::Void BasePremultipliedImage::Copy(PremultipliedImage^ srcImg, PremultipliedImage^ dstImg, PointUInt srcPt, PointUInt dstPt, Size_^ size);
-    
+
     template UnassociatedImage^ BaseUnassociatedImage::Clone();
     template System::Void BaseUnassociatedImage::Clear(UnassociatedImage^ dstImg, PointUInt pt, Size_^ size);
     template System::Void BaseUnassociatedImage::Copy(UnassociatedImage^ srcImg, UnassociatedImage^ dstImg, PointUInt srcPt, PointUInt dstPt, Size_^ size);

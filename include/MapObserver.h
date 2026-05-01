@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Convert.h"
 #include "Enums.h"
 #include "NativeWrapper.h"
@@ -64,7 +64,7 @@ namespace DOTNET_NAMESPACE
         delegate System::Void SourceChangedHandler(System::String^ id, SourceType type);
         delegate System::Void DidBecomeIdleHandler();
         delegate System::Void StyleImageMissingHandler(System::String^ id);
-        
+
         /// <summary>
         /// This event handler should return true if unused image can be removed,
         /// false otherwise. By default, unused image will be removed.

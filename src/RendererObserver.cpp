@@ -1,4 +1,4 @@
-#include "Convert.h"
+﻿#include "Convert.h"
 #include "RendererObserver.h"
 #include "ShaderRegistry.h"
 #include <mbgl/gfx/shader_registry.hpp>
@@ -154,7 +154,7 @@ namespace DOTNET_NAMESPACE
             StyleImageMissingCallbackHelper^ callbackHelper = gcnew StyleImageMissingCallbackHelper(this);
 
             _PendingCallbacks->TryAdd(callbackHelper, System::IntPtr(new StyleImageMissingCallback(done)));
-            
+
             StyleImageMissingHandler->Invoke(
                 Convert::ToSystemString(id),
                 gcnew DOTNET_NAMESPACE::RendererObserver::StyleImageMissingCallback(

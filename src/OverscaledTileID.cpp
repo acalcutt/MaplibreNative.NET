@@ -1,4 +1,4 @@
-#include "CanonicalTileID.h"
+﻿#include "CanonicalTileID.h"
 #include "OverscaledTileID.h"
 #include "UnwrappedTileID.h"
 #include <mbgl/tile/tile_id.hpp>
@@ -9,7 +9,7 @@ namespace DOTNET_NAMESPACE
         : NativeWrapper(new mbgl::OverscaledTileID(overscaledZ, wrap, *canonical->NativePointer))
     {
     }
-    
+
     OverscaledTileID::OverscaledTileID(System::Byte overscaledZ, System::Int16 wrap, System::Byte z, System::UInt32 x, System::UInt32 y)
         : NativeWrapper(new mbgl::OverscaledTileID(overscaledZ, wrap, z, x, y))
     {

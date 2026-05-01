@@ -1,4 +1,4 @@
-#include "MapOptions.h"
+﻿#include "MapOptions.h"
 #include "Size.h"
 #include <mbgl/map/map_options.hpp>
 
@@ -19,14 +19,14 @@ namespace DOTNET_NAMESPACE
     MapOptions^ MapOptions::WithMapMode(DOTNET_NAMESPACE::MapMode mode)
     {
         NativePointer->withMapMode((mbgl::MapMode)mode);
-        
+
         return this;
     }
 
     MapOptions^ MapOptions::WithConstrainMode(DOTNET_NAMESPACE::ConstrainMode mode)
     {
         NativePointer->withConstrainMode((mbgl::ConstrainMode)mode);
-        
+
         return this;
     }
 
@@ -47,21 +47,21 @@ namespace DOTNET_NAMESPACE
     MapOptions^ MapOptions::WithNorthOrientation(DOTNET_NAMESPACE::NorthOrientation orientation)
     {
         NativePointer->withNorthOrientation((mbgl::NorthOrientation)orientation);
-        
+
         return this;
     }
 
     MapOptions^ MapOptions::WithSize(Size_^ size)
     {
         NativePointer->withSize(*size->NativePointer);
-        
+
         return this;
     }
 
     MapOptions^ MapOptions::WithPixelRatio(System::Single ratio)
     {
         NativePointer->withPixelRatio(ratio);
-        
+
         return this;
     }
 

@@ -1,4 +1,4 @@
-#include "Size.h"
+﻿#include "Size.h"
 #include <mbgl/util/size.hpp>
 
 namespace DOTNET_NAMESPACE
@@ -59,7 +59,7 @@ namespace DOTNET_NAMESPACE
     {
         return *a->NativePointer != *b->NativePointer;
     }
-    
+
     Size::Size(NativePointerHolder<mbgl::Size>^ nativePointerHolder) : NativeWrapper(nativePointerHolder)
     {
     }

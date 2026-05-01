@@ -1,4 +1,4 @@
-#include "CameraOptions.h"
+﻿#include "CameraOptions.h"
 #include "Convert.h"
 #include "HeadlessFrontend.h"
 #include "LatLng.h"
@@ -21,11 +21,11 @@ namespace DOTNET_NAMESPACE
     HeadlessFrontend::HeadlessFrontend() : HeadlessFrontend(gcnew Size_(512, 512))
     {
     }
-    
+
     HeadlessFrontend::HeadlessFrontend(Size_^ size) : HeadlessFrontend(size, 1.0f)
     {
     }
-    
+
     HeadlessFrontend::HeadlessFrontend(Size_^ size, System::Single pixelRatio)
         : NativeWrapper(new mbgl::HeadlessFrontend(*size->NativePointer, pixelRatio))
     {
@@ -120,7 +120,7 @@ namespace DOTNET_NAMESPACE
     {
         NativePointer->setSize(*value->NativePointer);
     }
-    
+
     Renderer_^ HeadlessFrontend::Renderer::get()
     {
         return gcnew Renderer_(Renderer_::CreateNativePointerHolder(NativePointer->getRenderer()));

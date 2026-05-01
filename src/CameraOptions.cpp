@@ -1,4 +1,4 @@
-#include "CameraOptions.h"
+﻿#include "CameraOptions.h"
 #include "EdgeInsets.h"
 #include "LatLng.h"
 #include "Point.h"
@@ -28,7 +28,7 @@ namespace DOTNET_NAMESPACE
         {
             NativePointer->withCenter(std::nullopt);
         }
-        
+
         return this;
     }
 
@@ -48,7 +48,7 @@ namespace DOTNET_NAMESPACE
         {
             NativePointer->withPadding(std::nullopt);
         }
-        
+
         return this;
     }
 
@@ -76,7 +76,7 @@ namespace DOTNET_NAMESPACE
         {
             NativePointer->withZoom(std::nullopt);
         }
-        
+
         return this;
     }
 
@@ -166,7 +166,7 @@ namespace DOTNET_NAMESPACE
         {
             _Center = nullptr;
         }
-        
+
         return _Center;
     }
 
@@ -230,7 +230,7 @@ namespace DOTNET_NAMESPACE
         {
             return System::Nullable<System::Double>(NativePointer->zoom.value());
         }
-        
+
         return System::Nullable<System::Double>();
     }
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Image.h"
 
 namespace DOTNET_NAMESPACE
@@ -39,7 +39,7 @@ namespace DOTNET_NAMESPACE
         /// move data within a single Image.
         /// </exception>
         static System::Void Copy(PremultipliedImage^ srcImg, PremultipliedImage^ dstImg, PointUInt srcPt, PointUInt dstPt, Size_^ size);
-        
+
         static PremultipliedImage^ DecodeImage(System::String^ data);
         static cli::array<System::Byte>^ EncodePNG(PremultipliedImage^ image);
     internal:

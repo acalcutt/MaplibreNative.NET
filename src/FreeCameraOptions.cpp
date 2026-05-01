@@ -1,4 +1,4 @@
-#include "FreeCameraOptions.h"
+﻿#include "FreeCameraOptions.h"
 #include "LatLng.h"
 #include "Vector.h"
 #include <mbgl/map/camera.hpp>
@@ -60,7 +60,7 @@ namespace DOTNET_NAMESPACE
         {
             return gcnew Vec4(Vec4::CreateNativePointerHolder(NativePointer->orientation.value()));
         }
-        
+
         return nullptr;
     }
 

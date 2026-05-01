@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Enums.h"
 #include "NativeWrapper.h"
 #include "Point.h"
@@ -35,7 +35,7 @@ namespace DOTNET_NAMESPACE
     using ProjectionMode_ = ProjectionMode;
     using Style_ = Style;
     using TransformState_ = TransformState;
-    
+
     public enum class MapDebugOptions : System::UInt32
     {
         NoDebug = 0,
@@ -47,7 +47,7 @@ namespace DOTNET_NAMESPACE
         StencilClip = 1 << 6,
         DepthBuffer = 1 << 7,
     };
-    
+
     public ref class Map : NativeWrapper<mbgl::Map>
     {
     public:
@@ -87,43 +87,43 @@ namespace DOTNET_NAMESPACE
         System::Void PitchBy(System::Double pitch, AnimationOptions^ animation);
         System::Void RotateBy(ScreenCoordinate first, ScreenCoordinate second);
         System::Void RotateBy(ScreenCoordinate first, ScreenCoordinate second, AnimationOptions^ animation);
-        
+
         CameraOptions^ CameraForLatLngBounds(
             LatLngBounds^ bounds,
             EdgeInsets^ padding
         );
-        
+
         CameraOptions^ CameraForLatLngBounds(
             LatLngBounds^ bounds,
             EdgeInsets^ padding,
             System::Nullable<System::Double> bearing
         );
-        
+
         CameraOptions^ CameraForLatLngBounds(
             LatLngBounds^ bounds,
             EdgeInsets^ padding,
             System::Nullable<System::Double> bearing,
             System::Nullable<System::Double> pitch
         );
-        
+
         CameraOptions^ CameraForLatLngs(
             System::Collections::Generic::IEnumerable<LatLng^>^ latLngs,
             EdgeInsets^ padding
         );
-        
+
         CameraOptions^ CameraForLatLngs(
             System::Collections::Generic::IEnumerable<LatLng^>^ latLngs,
             EdgeInsets^ padding,
             System::Nullable<System::Double> bearing
         );
-        
+
         CameraOptions^ CameraForLatLngs(
             System::Collections::Generic::IEnumerable<LatLng^>^ latLngs,
             EdgeInsets^ padding,
             System::Nullable<System::Double> bearing,
             System::Nullable<System::Double> pitch
         );
-        
+
         LatLngBounds^ LatLngBoundsForCamera(CameraOptions^ camera);
         LatLngBounds^ LatLngBoundsForCameraUnwrapped(CameraOptions^ camera);
         System::Void SetNorthOrientation(NorthOrientation orientation);
@@ -174,7 +174,7 @@ namespace DOTNET_NAMESPACE
         property System::Double TileLodPitchThreshold { System::Double get(); System::Void set(System::Double value); }
         property System::Double TileLodZoomShift { System::Double get(); System::Void set(System::Double value); }
         property TileLodMode TileLodMode_ { TileLodMode get(); System::Void set(TileLodMode value); }
-        
+
         /// <summary>
         /// FreeCameraOptions provides more direct access to the underlying camera
         /// entity. For backwards compatibility the state set using this API must be

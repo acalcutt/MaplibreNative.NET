@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 
 namespace mbgl
@@ -29,7 +29,7 @@ namespace DOTNET_NAMESPACE
         /// <param name="token">Mapbox access token.</param>
         /// <returns>ResourceOptions for chaining options together.</returns>
         ResourceOptions^ WithApiKey(System::String^ token);
-        
+
         // TODO: implement the managed version
         //ResourceOptions^ WithTileServerOptions(TileServerOptions tileServerOptions);
 
@@ -71,7 +71,7 @@ namespace DOTNET_NAMESPACE
         /// Gets the previously set (or default) Mapbox access token.
         /// </summary>
         property System::String^ ApiKey { System::String^ get(); }
-        
+
         // TODO: implement the managed version
         //property TileServerOptions TileServerOptions { TileServerOptions get(); }
 

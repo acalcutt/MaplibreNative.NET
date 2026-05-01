@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "NativeWrapper.h"
 #include "Point.h"
 
@@ -11,7 +11,7 @@ namespace DOTNET_NAMESPACE
 {
     ref class EdgeInsets;
     ref class LatLng;
-    
+
     /// <summary>
     /// Various options for describing the viewpoint of a map. All properties are
     /// optional.

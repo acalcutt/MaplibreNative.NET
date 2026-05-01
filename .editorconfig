@@ -1,0 +1,39 @@
+root = true
+
+# All files
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# C++/CLI source and headers
+[*.{cpp,h,hpp}]
+indent_style = space
+indent_size = 4
+
+# CMake
+[CMakeLists.txt]
+indent_style = space
+indent_size = 2
+
+[*.cmake]
+indent_style = space
+indent_size = 2
+
+# PowerShell
+[*.ps1]
+indent_style = space
+indent_size = 4
+
+# JSON / YAML
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Dependencies are managed externally — do not reformat
+[dependencies/**]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = false
+insert_final_newline = false

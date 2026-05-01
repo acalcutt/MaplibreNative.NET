@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "NativeWrapper.h"
 #include <algorithm>
 #include <msclr/gcroot.h>
@@ -17,7 +17,7 @@ namespace DOTNET_NAMESPACE
 
     using TransitionFrameFunction_ = TransitionFrameFunction;
     using TransitionFinishFunction_ = TransitionFinishFunction;
-    
+
     class NativeTransitionFunctionsHelper
     {
     public:
@@ -56,14 +56,14 @@ namespace DOTNET_NAMESPACE
         /// <summary>
         /// Average velocity of a flyTo() transition, measured in screenfuls per
         /// second, assuming a linear timing curve.
-        /// 
+        ///
         /// A <i>screenful</i> is the visible span in pixels. It does not correspond
         /// to a fixed physical distance but rather varies by zoom level.
         /// </summary>
         property System::Nullable<System::Double> Velocity { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }
 
         /// <summary>
-        /// Zero-based zoom level at the peak of the flyTo() transition’s flight
+        /// Zero-based zoom level at the peak of the flyTo() transitionï¿½s flight
         /// path.
         /// </summary>
         property System::Nullable<System::Double> MinZoom { System::Nullable<System::Double> get(); System::Void set(System::Nullable<System::Double> value); }

@@ -1,4 +1,4 @@
-#include "AnimationOptions.h"
+﻿#include "AnimationOptions.h"
 #include "BoundOptions.h"
 #include "CameraOptions.h"
 #include "ClientOptions.h"
@@ -21,7 +21,7 @@
 namespace
 {
     using namespace ::DOTNET_NAMESPACE;
-    
+
     void StillImageCallbackHandler(std::exception_ptr eptr, Map::StillImageCallback^ callback)
     {
         msclr::gcroot<System::Exception^> exception = nullptr;
@@ -277,7 +277,7 @@ namespace DOTNET_NAMESPACE
         {
             result.emplace_back(*latLng->NativePointer);
         }
-        
+
         return gcnew CameraOptions(CameraOptions::CreateNativePointerHolder(
             NativePointer->cameraForLatLngs(
                 result,
@@ -445,7 +445,7 @@ namespace DOTNET_NAMESPACE
         {
             _Style = gcnew Style_(Style_::CreateNativePointerHolder(&NativePointer->getStyle(), false));
         }
-        
+
         return _Style;
     }
 
