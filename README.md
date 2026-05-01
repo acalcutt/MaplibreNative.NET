@@ -86,20 +86,7 @@ You can check other examples at the [Examples](https://github.com/tdcosta100/Map
 ```powershell
 git clone -j8 https://github.com/tdcosta100/MaplibreNative.NET.git
 cd MaplibreNative.NET-ac
-git submodule update --init dependencies/maplibre-native
-```
 
-Then initialize the nested vendor submodules. One submodule (`vendor/vector-tile`) may need its remote corrected manually before the full recursive init succeeds:
-
-```powershell
-# Fix the vector-tile remote (only needed once)
-Set-Location dependencies/maplibre-native/vendor/vector-tile
-git remote set-url origin https://github.com/maplibre/mvt-cpp.git
-git fetch origin
-git checkout 8ad3bf0b78bf9cb0dba0abaccec0c180e1c27ab3
-Set-Location ../../../..
-
-# Initialize all remaining nested submodules
 git submodule update --init --recursive dependencies/maplibre-native
 ```
 
