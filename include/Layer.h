@@ -69,5 +69,19 @@ namespace DOTNET_NAMESPACE
         ///  "heatmap", "hillshade", "fill-extrusion").
         /// </summary>
         property System::String^ Type { System::String^ get(); }
+
+        /// <summary>
+        /// Gets the current filter expression as a JSON string,
+        /// or an empty string if no filter is set.
+        /// </summary>
+        System::String^ GetFilter();
+
+        /// <summary>
+        /// Sets a filter expression from a MapLibre filter JSON string,
+        /// e.g. <c>["==", "class", "motorway"]</c> or a full expression array.
+        /// Pass null or an empty string to clear the filter.
+        /// Throws if the JSON cannot be parsed as a valid filter expression.
+        /// </summary>
+        System::Void SetFilter(System::String^ filterJson);
     };
 }

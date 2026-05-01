@@ -112,6 +112,63 @@ namespace DOTNET_NAMESPACE
         Impl()->setFillAntialias(mbgl::style::PropertyValue<bool>(value));
     }
 
+    float FillLayer::SortKey::get()
+    {
+        return GetFloat(Impl()->getFillSortKey(), 0.0f);
+    }
+
+    System::Void FillLayer::SortKey::set(float value)
+    {
+        Impl()->setFillSortKey(mbgl::style::PropertyValue<float>(value));
+    }
+
+    System::String^ FillLayer::Pattern::get()
+    {
+        auto& pv = Impl()->getFillPattern();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().id().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void FillLayer::Pattern::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setFillPattern(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    cli::array<float>^ FillLayer::Translate::get()
+    {
+        auto& pv = Impl()->getFillTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void FillLayer::Translate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setFillTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType FillLayer::TranslateAnchor::get()
+    {
+        auto& pv = Impl()->getFillTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void FillLayer::TranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setFillTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
+    }
+
     // =========================================================================
     // LineLayer
     // =========================================================================
@@ -181,6 +238,114 @@ namespace DOTNET_NAMESPACE
     System::Void LineLayer::Offset::set(float value)
     {
         Impl()->setLineOffset(mbgl::style::PropertyValue<float>(value));
+    }
+
+    LineCapType LineLayer::Cap::get()
+    {
+        auto& pv = Impl()->getLineCap();
+        if (pv.isConstant())
+            return static_cast<LineCapType>(pv.asConstant());
+        return LineCapType::Butt;
+    }
+
+    System::Void LineLayer::Cap::set(LineCapType value)
+    {
+        Impl()->setLineCap(mbgl::style::PropertyValue<mbgl::style::LineCapType>(
+            static_cast<mbgl::style::LineCapType>(value)));
+    }
+
+    LineJoinType LineLayer::Join::get()
+    {
+        auto& pv = Impl()->getLineJoin();
+        if (pv.isConstant())
+            return static_cast<LineJoinType>(pv.asConstant());
+        return LineJoinType::Miter;
+    }
+
+    System::Void LineLayer::Join::set(LineJoinType value)
+    {
+        Impl()->setLineJoin(mbgl::style::PropertyValue<mbgl::style::LineJoinType>(
+            static_cast<mbgl::style::LineJoinType>(value)));
+    }
+
+    float LineLayer::SortKey::get()
+    {
+        return GetFloat(Impl()->getLineSortKey(), 0.0f);
+    }
+
+    System::Void LineLayer::SortKey::set(float value)
+    {
+        Impl()->setLineSortKey(mbgl::style::PropertyValue<float>(value));
+    }
+
+    cli::array<float>^ LineLayer::Dasharray::get()
+    {
+        auto& pv = Impl()->getLineDasharray();
+        if (pv.isConstant())
+        {
+            const auto& vec = pv.asConstant();
+            auto arr = gcnew cli::array<float>(static_cast<int>(vec.size()));
+            for (int i = 0; i < static_cast<int>(vec.size()); ++i)
+                arr[i] = vec[i];
+            return arr;
+        }
+        return gcnew cli::array<float>(0);
+    }
+
+    System::Void LineLayer::Dasharray::set(cli::array<float>^ value)
+    {
+        std::vector<float> vec;
+        if (value != nullptr)
+            for each (float v in value)
+                vec.push_back(v);
+        Impl()->setLineDasharray(mbgl::style::PropertyValue<std::vector<float>>(vec));
+    }
+
+    System::String^ LineLayer::Pattern::get()
+    {
+        auto& pv = Impl()->getLinePattern();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().id().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void LineLayer::Pattern::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setLinePattern(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    cli::array<float>^ LineLayer::Translate::get()
+    {
+        auto& pv = Impl()->getLineTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void LineLayer::Translate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setLineTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType LineLayer::TranslateAnchor::get()
+    {
+        auto& pv = Impl()->getLineTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void LineLayer::TranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setLineTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
     }
 
     // =========================================================================
@@ -264,6 +429,76 @@ namespace DOTNET_NAMESPACE
         Impl()->setCircleBlur(mbgl::style::PropertyValue<float>(value));
     }
 
+    float CircleLayer::SortKey::get()
+    {
+        return GetFloat(Impl()->getCircleSortKey(), 0.0f);
+    }
+
+    System::Void CircleLayer::SortKey::set(float value)
+    {
+        Impl()->setCircleSortKey(mbgl::style::PropertyValue<float>(value));
+    }
+
+    CirclePitchScaleType CircleLayer::PitchScale::get()
+    {
+        auto& pv = Impl()->getCirclePitchScale();
+        if (pv.isConstant())
+            return static_cast<CirclePitchScaleType>(pv.asConstant());
+        return CirclePitchScaleType::Map;
+    }
+
+    System::Void CircleLayer::PitchScale::set(CirclePitchScaleType value)
+    {
+        Impl()->setCirclePitchScale(mbgl::style::PropertyValue<mbgl::style::CirclePitchScaleType>(
+            static_cast<mbgl::style::CirclePitchScaleType>(value)));
+    }
+
+    AlignmentType CircleLayer::PitchAlignment::get()
+    {
+        auto& pv = Impl()->getCirclePitchAlignment();
+        if (pv.isConstant())
+            return static_cast<AlignmentType>(pv.asConstant());
+        return AlignmentType::Viewport;
+    }
+
+    System::Void CircleLayer::PitchAlignment::set(AlignmentType value)
+    {
+        Impl()->setCirclePitchAlignment(mbgl::style::PropertyValue<mbgl::style::AlignmentType>(
+            static_cast<mbgl::style::AlignmentType>(value)));
+    }
+
+    cli::array<float>^ CircleLayer::Translate::get()
+    {
+        auto& pv = Impl()->getCircleTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void CircleLayer::Translate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setCircleTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType CircleLayer::TranslateAnchor::get()
+    {
+        auto& pv = Impl()->getCircleTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void CircleLayer::TranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setCircleTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
+    }
+
     // =========================================================================
     // SymbolLayer
     // =========================================================================
@@ -274,6 +509,463 @@ namespace DOTNET_NAMESPACE
     {
         return static_cast<mbgl::style::SymbolLayer*>(_layer);
     }
+
+    // ---- Layout: Symbol placement ----
+
+    SymbolPlacementType SymbolLayer::SymbolPlacement::get()
+    {
+        auto& pv = Impl()->getSymbolPlacement();
+        if (pv.isConstant())
+            return static_cast<SymbolPlacementType>(pv.asConstant());
+        return SymbolPlacementType::Point;
+    }
+
+    System::Void SymbolLayer::SymbolPlacement::set(SymbolPlacementType value)
+    {
+        Impl()->setSymbolPlacement(mbgl::style::PropertyValue<mbgl::style::SymbolPlacementType>(
+            static_cast<mbgl::style::SymbolPlacementType>(value)));
+    }
+
+    float SymbolLayer::SymbolSpacing::get()
+    {
+        return GetFloat(Impl()->getSymbolSpacing(), 250.0f);
+    }
+
+    System::Void SymbolLayer::SymbolSpacing::set(float value)
+    {
+        Impl()->setSymbolSpacing(mbgl::style::PropertyValue<float>(value));
+    }
+
+    bool SymbolLayer::SymbolAvoidEdges::get()
+    {
+        return GetBool(Impl()->getSymbolAvoidEdges(), false);
+    }
+
+    System::Void SymbolLayer::SymbolAvoidEdges::set(bool value)
+    {
+        Impl()->setSymbolAvoidEdges(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    float SymbolLayer::SymbolSortKey::get()
+    {
+        return GetFloat(Impl()->getSymbolSortKey(), 0.0f);
+    }
+
+    System::Void SymbolLayer::SymbolSortKey::set(float value)
+    {
+        Impl()->setSymbolSortKey(mbgl::style::PropertyValue<float>(value));
+    }
+
+    SymbolZOrderType SymbolLayer::SymbolZOrder::get()
+    {
+        auto& pv = Impl()->getSymbolZOrder();
+        if (pv.isConstant())
+            return static_cast<SymbolZOrderType>(pv.asConstant());
+        return SymbolZOrderType::Auto;
+    }
+
+    System::Void SymbolLayer::SymbolZOrder::set(SymbolZOrderType value)
+    {
+        Impl()->setSymbolZOrder(mbgl::style::PropertyValue<mbgl::style::SymbolZOrderType>(
+            static_cast<mbgl::style::SymbolZOrderType>(value)));
+    }
+
+    // ---- Layout: Icon ----
+
+    System::String^ SymbolLayer::IconImage::get()
+    {
+        auto& pv = Impl()->getIconImage();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().id().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void SymbolLayer::IconImage::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setIconImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    float SymbolLayer::IconSize::get()
+    {
+        return GetFloat(Impl()->getIconSize(), 1.0f);
+    }
+
+    System::Void SymbolLayer::IconSize::set(float value)
+    {
+        Impl()->setIconSize(mbgl::style::PropertyValue<float>(value));
+    }
+
+    SymbolAnchorType SymbolLayer::IconAnchor::get()
+    {
+        auto& pv = Impl()->getIconAnchor();
+        if (pv.isConstant())
+            return static_cast<SymbolAnchorType>(pv.asConstant());
+        return SymbolAnchorType::Center;
+    }
+
+    System::Void SymbolLayer::IconAnchor::set(SymbolAnchorType value)
+    {
+        Impl()->setIconAnchor(mbgl::style::PropertyValue<mbgl::style::SymbolAnchorType>(
+            static_cast<mbgl::style::SymbolAnchorType>(value)));
+    }
+
+    float SymbolLayer::IconRotate::get()
+    {
+        return GetFloat(Impl()->getIconRotate(), 0.0f);
+    }
+
+    System::Void SymbolLayer::IconRotate::set(float value)
+    {
+        Impl()->setIconRotate(mbgl::style::PropertyValue<float>(value));
+    }
+
+    cli::array<float>^ SymbolLayer::IconOffset::get()
+    {
+        auto& pv = Impl()->getIconOffset();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void SymbolLayer::IconOffset::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setIconOffset(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    float SymbolLayer::IconPadding::get()
+    {
+        return GetFloat(Impl()->getIconPadding(), 2.0f);
+    }
+
+    System::Void SymbolLayer::IconPadding::set(float value)
+    {
+        Impl()->setIconPadding(mbgl::style::PropertyValue<float>(value));
+    }
+
+    bool SymbolLayer::IconKeepUpright::get()
+    {
+        return GetBool(Impl()->getIconKeepUpright(), false);
+    }
+
+    System::Void SymbolLayer::IconKeepUpright::set(bool value)
+    {
+        Impl()->setIconKeepUpright(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    bool SymbolLayer::IconAllowOverlap::get()
+    {
+        return GetBool(Impl()->getIconAllowOverlap(), false);
+    }
+
+    System::Void SymbolLayer::IconAllowOverlap::set(bool value)
+    {
+        Impl()->setIconAllowOverlap(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    bool SymbolLayer::IconIgnorePlacement::get()
+    {
+        return GetBool(Impl()->getIconIgnorePlacement(), false);
+    }
+
+    System::Void SymbolLayer::IconIgnorePlacement::set(bool value)
+    {
+        Impl()->setIconIgnorePlacement(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    bool SymbolLayer::IconOptional::get()
+    {
+        return GetBool(Impl()->getIconOptional(), false);
+    }
+
+    System::Void SymbolLayer::IconOptional::set(bool value)
+    {
+        Impl()->setIconOptional(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    AlignmentType SymbolLayer::IconRotationAlignment::get()
+    {
+        auto& pv = Impl()->getIconRotationAlignment();
+        if (pv.isConstant())
+            return static_cast<AlignmentType>(pv.asConstant());
+        return AlignmentType::Auto;
+    }
+
+    System::Void SymbolLayer::IconRotationAlignment::set(AlignmentType value)
+    {
+        Impl()->setIconRotationAlignment(mbgl::style::PropertyValue<mbgl::style::AlignmentType>(
+            static_cast<mbgl::style::AlignmentType>(value)));
+    }
+
+    AlignmentType SymbolLayer::IconPitchAlignment::get()
+    {
+        auto& pv = Impl()->getIconPitchAlignment();
+        if (pv.isConstant())
+            return static_cast<AlignmentType>(pv.asConstant());
+        return AlignmentType::Auto;
+    }
+
+    System::Void SymbolLayer::IconPitchAlignment::set(AlignmentType value)
+    {
+        Impl()->setIconPitchAlignment(mbgl::style::PropertyValue<mbgl::style::AlignmentType>(
+            static_cast<mbgl::style::AlignmentType>(value)));
+    }
+
+    // ---- Layout: Text ----
+
+    System::String^ SymbolLayer::TextField::get()
+    {
+        auto& pv = Impl()->getTextField();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().toString().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void SymbolLayer::TextField::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setTextField(mbgl::style::PropertyValue<mbgl::style::expression::Formatted>(
+            mbgl::style::expression::Formatted(raw.c_str())));
+    }
+
+    cli::array<System::String^>^ SymbolLayer::TextFont::get()
+    {
+        auto& pv = Impl()->getTextFont();
+        if (pv.isConstant())
+        {
+            const auto& vec = pv.asConstant();
+            auto arr = gcnew cli::array<System::String^>(static_cast<int>(vec.size()));
+            for (int i = 0; i < static_cast<int>(vec.size()); ++i)
+                arr[i] = gcnew System::String(vec[i].c_str());
+            return arr;
+        }
+        return gcnew cli::array<System::String^>(0);
+    }
+
+    System::Void SymbolLayer::TextFont::set(cli::array<System::String^>^ value)
+    {
+        std::vector<std::string> vec;
+        if (value != nullptr)
+            for each (System::String^ s in value)
+                vec.push_back(msclr::interop::marshal_as<std::string>(s));
+        Impl()->setTextFont(mbgl::style::PropertyValue<std::vector<std::string>>(vec));
+    }
+
+    float SymbolLayer::TextSize::get()
+    {
+        return GetFloat(Impl()->getTextSize(), 16.0f);
+    }
+
+    System::Void SymbolLayer::TextSize::set(float value)
+    {
+        Impl()->setTextSize(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::TextMaxWidth::get()
+    {
+        return GetFloat(Impl()->getTextMaxWidth(), 10.0f);
+    }
+
+    System::Void SymbolLayer::TextMaxWidth::set(float value)
+    {
+        Impl()->setTextMaxWidth(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::TextLineHeight::get()
+    {
+        return GetFloat(Impl()->getTextLineHeight(), 1.2f);
+    }
+
+    System::Void SymbolLayer::TextLineHeight::set(float value)
+    {
+        Impl()->setTextLineHeight(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::TextLetterSpacing::get()
+    {
+        return GetFloat(Impl()->getTextLetterSpacing(), 0.0f);
+    }
+
+    System::Void SymbolLayer::TextLetterSpacing::set(float value)
+    {
+        Impl()->setTextLetterSpacing(mbgl::style::PropertyValue<float>(value));
+    }
+
+    TextJustifyType SymbolLayer::TextJustify::get()
+    {
+        auto& pv = Impl()->getTextJustify();
+        if (pv.isConstant())
+            return static_cast<TextJustifyType>(pv.asConstant());
+        return TextJustifyType::Center;
+    }
+
+    System::Void SymbolLayer::TextJustify::set(TextJustifyType value)
+    {
+        Impl()->setTextJustify(mbgl::style::PropertyValue<mbgl::style::TextJustifyType>(
+            static_cast<mbgl::style::TextJustifyType>(value)));
+    }
+
+    float SymbolLayer::TextRadialOffset::get()
+    {
+        return GetFloat(Impl()->getTextRadialOffset(), 0.0f);
+    }
+
+    System::Void SymbolLayer::TextRadialOffset::set(float value)
+    {
+        Impl()->setTextRadialOffset(mbgl::style::PropertyValue<float>(value));
+    }
+
+    SymbolAnchorType SymbolLayer::TextAnchor::get()
+    {
+        auto& pv = Impl()->getTextAnchor();
+        if (pv.isConstant())
+            return static_cast<SymbolAnchorType>(pv.asConstant());
+        return SymbolAnchorType::Center;
+    }
+
+    System::Void SymbolLayer::TextAnchor::set(SymbolAnchorType value)
+    {
+        Impl()->setTextAnchor(mbgl::style::PropertyValue<mbgl::style::SymbolAnchorType>(
+            static_cast<mbgl::style::SymbolAnchorType>(value)));
+    }
+
+    float SymbolLayer::TextMaxAngle::get()
+    {
+        return GetFloat(Impl()->getTextMaxAngle(), 45.0f);
+    }
+
+    System::Void SymbolLayer::TextMaxAngle::set(float value)
+    {
+        Impl()->setTextMaxAngle(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::TextRotate::get()
+    {
+        return GetFloat(Impl()->getTextRotate(), 0.0f);
+    }
+
+    System::Void SymbolLayer::TextRotate::set(float value)
+    {
+        Impl()->setTextRotate(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::TextPadding::get()
+    {
+        return GetFloat(Impl()->getTextPadding(), 2.0f);
+    }
+
+    System::Void SymbolLayer::TextPadding::set(float value)
+    {
+        Impl()->setTextPadding(mbgl::style::PropertyValue<float>(value));
+    }
+
+    bool SymbolLayer::TextKeepUpright::get()
+    {
+        return GetBool(Impl()->getTextKeepUpright(), true);
+    }
+
+    System::Void SymbolLayer::TextKeepUpright::set(bool value)
+    {
+        Impl()->setTextKeepUpright(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    TextTransformType SymbolLayer::TextTransform::get()
+    {
+        auto& pv = Impl()->getTextTransform();
+        if (pv.isConstant())
+            return static_cast<TextTransformType>(pv.asConstant());
+        return TextTransformType::None;
+    }
+
+    System::Void SymbolLayer::TextTransform::set(TextTransformType value)
+    {
+        Impl()->setTextTransform(mbgl::style::PropertyValue<mbgl::style::TextTransformType>(
+            static_cast<mbgl::style::TextTransformType>(value)));
+    }
+
+    cli::array<float>^ SymbolLayer::TextOffset::get()
+    {
+        auto& pv = Impl()->getTextOffset();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void SymbolLayer::TextOffset::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setTextOffset(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    bool SymbolLayer::TextAllowOverlap::get()
+    {
+        return GetBool(Impl()->getTextAllowOverlap(), false);
+    }
+
+    System::Void SymbolLayer::TextAllowOverlap::set(bool value)
+    {
+        Impl()->setTextAllowOverlap(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    bool SymbolLayer::TextIgnorePlacement::get()
+    {
+        return GetBool(Impl()->getTextIgnorePlacement(), false);
+    }
+
+    System::Void SymbolLayer::TextIgnorePlacement::set(bool value)
+    {
+        Impl()->setTextIgnorePlacement(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    bool SymbolLayer::TextOptional::get()
+    {
+        return GetBool(Impl()->getTextOptional(), false);
+    }
+
+    System::Void SymbolLayer::TextOptional::set(bool value)
+    {
+        Impl()->setTextOptional(mbgl::style::PropertyValue<bool>(value));
+    }
+
+    AlignmentType SymbolLayer::TextRotationAlignment::get()
+    {
+        auto& pv = Impl()->getTextRotationAlignment();
+        if (pv.isConstant())
+            return static_cast<AlignmentType>(pv.asConstant());
+        return AlignmentType::Auto;
+    }
+
+    System::Void SymbolLayer::TextRotationAlignment::set(AlignmentType value)
+    {
+        Impl()->setTextRotationAlignment(mbgl::style::PropertyValue<mbgl::style::AlignmentType>(
+            static_cast<mbgl::style::AlignmentType>(value)));
+    }
+
+    AlignmentType SymbolLayer::TextPitchAlignment::get()
+    {
+        auto& pv = Impl()->getTextPitchAlignment();
+        if (pv.isConstant())
+            return static_cast<AlignmentType>(pv.asConstant());
+        return AlignmentType::Auto;
+    }
+
+    System::Void SymbolLayer::TextPitchAlignment::set(AlignmentType value)
+    {
+        Impl()->setTextPitchAlignment(mbgl::style::PropertyValue<mbgl::style::AlignmentType>(
+            static_cast<mbgl::style::AlignmentType>(value)));
+    }
+
+    // ---- Paint: Text ----
 
     System::String^ SymbolLayer::TextColor::get()
     {
@@ -295,16 +987,6 @@ namespace DOTNET_NAMESPACE
         Impl()->setTextOpacity(mbgl::style::PropertyValue<float>(value));
     }
 
-    float SymbolLayer::TextSize::get()
-    {
-        return GetFloat(Impl()->getTextSize(), 16.0f);
-    }
-
-    System::Void SymbolLayer::TextSize::set(float value)
-    {
-        Impl()->setTextSize(mbgl::style::PropertyValue<float>(value));
-    }
-
     System::String^ SymbolLayer::TextHaloColor::get()
     {
         return GetColor(Impl()->getTextHaloColor(), "rgba(0,0,0,0)");
@@ -324,6 +1006,18 @@ namespace DOTNET_NAMESPACE
     {
         Impl()->setTextHaloWidth(mbgl::style::PropertyValue<float>(value));
     }
+
+    float SymbolLayer::TextHaloBlur::get()
+    {
+        return GetFloat(Impl()->getTextHaloBlur(), 0.0f);
+    }
+
+    System::Void SymbolLayer::TextHaloBlur::set(float value)
+    {
+        Impl()->setTextHaloBlur(mbgl::style::PropertyValue<float>(value));
+    }
+
+    // ---- Paint: Icon ----
 
     float SymbolLayer::IconOpacity::get()
     {
@@ -363,6 +1057,16 @@ namespace DOTNET_NAMESPACE
     System::Void SymbolLayer::IconHaloWidth::set(float value)
     {
         Impl()->setIconHaloWidth(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float SymbolLayer::IconHaloBlur::get()
+    {
+        return GetFloat(Impl()->getIconHaloBlur(), 0.0f);
+    }
+
+    System::Void SymbolLayer::IconHaloBlur::set(float value)
+    {
+        Impl()->setIconHaloBlur(mbgl::style::PropertyValue<float>(value));
     }
 
     // =========================================================================

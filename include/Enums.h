@@ -83,4 +83,100 @@ namespace DOTNET_NAMESPACE
         /// </summary>
         ResourceLoader
     };
+
+    // =========================================================================
+    // Style layer property enums
+    // =========================================================================
+
+    public enum class LineCapType : System::Byte
+    {
+        Round,
+        Butt,
+        Square,
+    };
+
+    public enum class LineJoinType : System::Byte
+    {
+        Miter,
+        Bevel,
+        Round,
+    };
+
+    /// <summary>Controls the frame of reference for line/fill/circle translate.</summary>
+    public enum class TranslateAnchorType : System::Byte
+    {
+        Map,
+        Viewport,
+    };
+
+    /// <summary>Controls how the circle is translated relative to the camera pitch.</summary>
+    public enum class CirclePitchScaleType : System::Byte
+    {
+        Map,
+        Viewport,
+    };
+
+    public enum class SymbolPlacementType : System::Byte
+    {
+        Point,
+        Line,
+        LineCenter,
+    };
+
+    public enum class SymbolZOrderType : System::Byte
+    {
+        Auto,
+        ViewportY,
+        Source,
+    };
+
+    /// <summary>Alignment type used for icon/text pitch and rotation alignment.</summary>
+    public enum class AlignmentType : System::Byte
+    {
+        Map,
+        Viewport,
+        Auto,
+    };
+
+    public enum class TextJustifyType : System::Byte
+    {
+        Auto,
+        Center,
+        Left,
+        Right,
+    };
+
+    public enum class SymbolAnchorType : System::Byte
+    {
+        Center,
+        Left,
+        Right,
+        Top,
+        Bottom,
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+    };
+
+    public enum class TextTransformType : System::Byte
+    {
+        None,
+        Uppercase,
+        Lowercase,
+    };
+
+    public enum class IconTextFitType : System::Byte
+    {
+        None,
+        Both,
+        Width,
+        Height,
+    };
+
+    public enum class TextWritingModeType : System::Byte
+    {
+        Horizontal,
+        Vertical,
+    };
 }

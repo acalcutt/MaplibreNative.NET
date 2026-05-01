@@ -76,6 +76,18 @@ namespace DOTNET_NAMESPACE
         FillExtrusionLayer^ AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId);
         ColorReliefLayer^   AddColorReliefLayer(System::String^ layerId, System::String^ sourceId);
 
+        /// <summary>Same as the two-arg overloads but inserts the layer before <paramref name="beforeLayerId"/>.</summary>
+        FillLayer^          AddFillLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        LineLayer^          AddLineLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        CircleLayer^        AddCircleLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        SymbolLayer^        AddSymbolLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        RasterLayer^        AddRasterLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        BackgroundLayer^    AddBackgroundLayer(System::String^ layerId, System::String^ beforeLayerId);
+        HeatmapLayer^       AddHeatmapLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        HillshadeLayer^     AddHillshadeLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        FillExtrusionLayer^ AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        ColorReliefLayer^   AddColorReliefLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+
         /// <summary>Remove a layer by id. Returns true if removed.</summary>
         System::Boolean RemoveLayer(System::String^ layerId);
         /// <summary>Returns true if a layer with the given id exists.</summary>

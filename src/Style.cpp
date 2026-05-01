@@ -322,6 +322,99 @@ namespace DOTNET_NAMESPACE
     }
 
     // -------------------------------------------------------------------------
+    // AddXxxLayer overloads with beforeLayerId
+    // -------------------------------------------------------------------------
+
+    FillLayer^ Style::AddFillLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::FillLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew FillLayer(raw);
+    }
+
+    LineLayer^ Style::AddLineLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::LineLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew LineLayer(raw);
+    }
+
+    CircleLayer^ Style::AddCircleLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::CircleLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew CircleLayer(raw);
+    }
+
+    SymbolLayer^ Style::AddSymbolLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::SymbolLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew SymbolLayer(raw);
+    }
+
+    RasterLayer^ Style::AddRasterLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::RasterLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew RasterLayer(raw);
+    }
+
+    BackgroundLayer^ Style::AddBackgroundLayer(System::String^ layerId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::BackgroundLayer>(Convert::ToStdString(layerId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew BackgroundLayer(raw);
+    }
+
+    HeatmapLayer^ Style::AddHeatmapLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::HeatmapLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew HeatmapLayer(raw);
+    }
+
+    HillshadeLayer^ Style::AddHillshadeLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::HillshadeLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew HillshadeLayer(raw);
+    }
+
+    FillExtrusionLayer^ Style::AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::FillExtrusionLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew FillExtrusionLayer(raw);
+    }
+
+    ColorReliefLayer^ Style::AddColorReliefLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::ColorReliefLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew ColorReliefLayer(raw);
+    }
+
+    // -------------------------------------------------------------------------
     // Add source helpers
     // -------------------------------------------------------------------------
 

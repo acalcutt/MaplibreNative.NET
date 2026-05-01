@@ -1,5 +1,6 @@
 #pragma once
 #include "Layer.h"
+#include "Enums.h"
 
 // Forward-declare native layer types
 namespace mbgl {
@@ -66,6 +67,18 @@ namespace DOTNET_NAMESPACE
             bool get();
             System::Void set(bool);
         }
+
+        /// <summary>Sort key for feature rendering order within the layer.</summary>
+        property float SortKey { float get(); System::Void set(float); }
+
+        /// <summary>Sprite image name for the fill pattern. Empty string = no pattern.</summary>
+        property System::String^ Pattern { System::String^ get(); System::Void set(System::String^); }
+
+        /// <summary>X/Y translation of the fill layer in pixels as [x, y].</summary>
+        property cli::array<float>^ Translate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for Translate: Map or Viewport.</summary>
+        property TranslateAnchorType TranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
     };
 
     // =========================================================================
@@ -123,6 +136,30 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Cap style at the ends of lines.</summary>
+        property LineCapType Cap { LineCapType get(); System::Void set(LineCapType); }
+
+        /// <summary>Join style at corners of lines.</summary>
+        property LineJoinType Join { LineJoinType get(); System::Void set(LineJoinType); }
+
+        /// <summary>Sort key for feature rendering order within the layer.</summary>
+        property float SortKey { float get(); System::Void set(float); }
+
+        /// <summary>
+        /// Dash pattern for the line as alternating gap/dash lengths (in line widths).
+        /// Returns an empty array when unset (solid line).
+        /// </summary>
+        property cli::array<float>^ Dasharray { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Sprite image name for a repeating line pattern. Empty string = no pattern.</summary>
+        property System::String^ Pattern { System::String^ get(); System::Void set(System::String^); }
+
+        /// <summary>X/Y translation of the line layer in pixels as [x, y].</summary>
+        property cli::array<float>^ Translate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for Translate: Map or Viewport.</summary>
+        property TranslateAnchorType TranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
     };
 
     // =========================================================================
@@ -187,6 +224,21 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Sort key for feature rendering order within the layer.</summary>
+        property float SortKey { float get(); System::Void set(float); }
+
+        /// <summary>Controls the scaling of circle radius with camera pitch.</summary>
+        property CirclePitchScaleType PitchScale { CirclePitchScaleType get(); System::Void set(CirclePitchScaleType); }
+
+        /// <summary>Orientation of the circle relative to map or viewport.</summary>
+        property AlignmentType PitchAlignment { AlignmentType get(); System::Void set(AlignmentType); }
+
+        /// <summary>X/Y translation of circles in pixels as [x, y].</summary>
+        property cli::array<float>^ Translate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for Translate: Map or Viewport.</summary>
+        property TranslateAnchorType TranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
     };
 
     // =========================================================================
@@ -203,6 +255,133 @@ namespace DOTNET_NAMESPACE
         mbgl::style::SymbolLayer* Impl();
 
     public:
+        // ---- Layout: Symbol placement ----
+
+        /// <summary>How symbol icons and text are placed relative to its geometry. Default: Point.</summary>
+        property SymbolPlacementType SymbolPlacement { SymbolPlacementType get(); System::Void set(SymbolPlacementType); }
+
+        /// <summary>Distance between two symbol anchors when placement is Line. Default: 250.</summary>
+        property float SymbolSpacing { float get(); System::Void set(float); }
+
+        /// <summary>If true, symbols will not cross tile edges to avoid gaps or overlaps.</summary>
+        property bool SymbolAvoidEdges { bool get(); System::Void set(bool); }
+
+        /// <summary>Sort key for overlap resolution (lower = drawn below higher values).</summary>
+        property float SymbolSortKey { float get(); System::Void set(float); }
+
+        /// <summary>Determines whether overlapping symbols will be rendered in the order they appear in the data source. Default: Auto.</summary>
+        property SymbolZOrderType SymbolZOrder { SymbolZOrderType get(); System::Void set(SymbolZOrderType); }
+
+        // ---- Layout: Icon ----
+
+        /// <summary>
+        /// Name of a sprite image to use for the icon.
+        /// Returns the first section's image id for constant Formatted values, empty string otherwise.
+        /// </summary>
+        property System::String^ IconImage { System::String^ get(); System::Void set(System::String^); }
+
+        /// <summary>Scale factor for the icon image. Default: 1.</summary>
+        property float IconSize { float get(); System::Void set(float); }
+
+        /// <summary>Part of icon to anchor to its placement position. Default: Center.</summary>
+        property SymbolAnchorType IconAnchor { SymbolAnchorType get(); System::Void set(SymbolAnchorType); }
+
+        /// <summary>Rotates the icon clockwise by this angle in degrees.</summary>
+        property float IconRotate { float get(); System::Void set(float); }
+
+        /// <summary>Offset distance of icon from its anchor in [x, y] ems.</summary>
+        property cli::array<float>^ IconOffset { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Extra padding around icon bounding box used to detect symbol collisions. Default: 2.</summary>
+        property float IconPadding { float get(); System::Void set(float); }
+
+        /// <summary>If true, the icon may be flipped to prevent upside-down text. Default: false.</summary>
+        property bool IconKeepUpright { bool get(); System::Void set(bool); }
+
+        /// <summary>If true, other symbols can be visible even if they collide with the icon. Default: false.</summary>
+        property bool IconAllowOverlap { bool get(); System::Void set(bool); }
+
+        /// <summary>If true, the icon will be visible even if it collides with other symbols. Default: false.</summary>
+        property bool IconIgnorePlacement { bool get(); System::Void set(bool); }
+
+        /// <summary>If true, text will be displayed without icon if icon is not available. Default: false.</summary>
+        property bool IconOptional { bool get(); System::Void set(bool); }
+
+        /// <summary>In combination with SymbolPlacement, determines orientation of icon. Default: Auto.</summary>
+        property AlignmentType IconRotationAlignment { AlignmentType get(); System::Void set(AlignmentType); }
+
+        /// <summary>Orientation of icon when map is pitched. Default: Auto.</summary>
+        property AlignmentType IconPitchAlignment { AlignmentType get(); System::Void set(AlignmentType); }
+
+        // ---- Layout: Text ----
+
+        /// <summary>
+        /// Text content to display (plain string; for rich text use the style JSON directly).
+        /// </summary>
+        property System::String^ TextField { System::String^ get(); System::Void set(System::String^); }
+
+        /// <summary>
+        /// Ordered list of font stack names. E.g. { "Open Sans Bold", "Arial Unicode MS Bold" }.
+        /// Returns an empty array if not set.
+        /// </summary>
+        property cli::array<System::String^>^ TextFont { cli::array<System::String^>^ get(); System::Void set(cli::array<System::String^>^); }
+
+        /// <summary>Font size in pixels. Default: 16.</summary>
+        property float TextSize { float get(); System::Void set(float); }
+
+        /// <summary>Maximum line width for text wrapping in ems. Default: 10.</summary>
+        property float TextMaxWidth { float get(); System::Void set(float); }
+
+        /// <summary>Text leading value for multi-line text. Default: 1.2.</summary>
+        property float TextLineHeight { float get(); System::Void set(float); }
+
+        /// <summary>Spacing between letters in ems. Default: 0.</summary>
+        property float TextLetterSpacing { float get(); System::Void set(float); }
+
+        /// <summary>Text justification. Default: Center.</summary>
+        property TextJustifyType TextJustify { TextJustifyType get(); System::Void set(TextJustifyType); }
+
+        /// <summary>Radial offset in ems from the anchor (used instead of TextOffset for line/circle placement).</summary>
+        property float TextRadialOffset { float get(); System::Void set(float); }
+
+        /// <summary>Part of text to anchor to the symbol placement position. Default: Center.</summary>
+        property SymbolAnchorType TextAnchor { SymbolAnchorType get(); System::Void set(SymbolAnchorType); }
+
+        /// <summary>Maximum angle between adjacent glyph segments for line placement in degrees.</summary>
+        property float TextMaxAngle { float get(); System::Void set(float); }
+
+        /// <summary>Rotates the text clockwise by this angle in degrees.</summary>
+        property float TextRotate { float get(); System::Void set(float); }
+
+        /// <summary>Extra padding around text bounding box. Default: 2.</summary>
+        property float TextPadding { float get(); System::Void set(float); }
+
+        /// <summary>If true, the text may be flipped vertically to prevent upside-down text. Default: true.</summary>
+        property bool TextKeepUpright { bool get(); System::Void set(bool); }
+
+        /// <summary>Specifies how to capitalize text. Default: None.</summary>
+        property TextTransformType TextTransform { TextTransformType get(); System::Void set(TextTransformType); }
+
+        /// <summary>Offset distance of text from its anchor in [x, y] ems.</summary>
+        property cli::array<float>^ TextOffset { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>If true, other symbols can be visible even if they collide with the text.</summary>
+        property bool TextAllowOverlap { bool get(); System::Void set(bool); }
+
+        /// <summary>If true, the text will be visible even if it collides with other symbols.</summary>
+        property bool TextIgnorePlacement { bool get(); System::Void set(bool); }
+
+        /// <summary>If true, icons will be shown without text if text is not available.</summary>
+        property bool TextOptional { bool get(); System::Void set(bool); }
+
+        /// <summary>In combination with SymbolPlacement, determines orientation of text. Default: Auto.</summary>
+        property AlignmentType TextRotationAlignment { AlignmentType get(); System::Void set(AlignmentType); }
+
+        /// <summary>Orientation of text when map is pitched. Default: Auto.</summary>
+        property AlignmentType TextPitchAlignment { AlignmentType get(); System::Void set(AlignmentType); }
+
+        // ---- Paint: Text ----
+
         /// <summary>Text color as a CSS hex string.</summary>
         property System::String^ TextColor
         {
@@ -212,13 +391,6 @@ namespace DOTNET_NAMESPACE
 
         /// <summary>Text opacity (0.0 – 1.0).</summary>
         property float TextOpacity
-        {
-            float get();
-            System::Void set(float);
-        }
-
-        /// <summary>Font size in pixels.</summary>
-        property float TextSize
         {
             float get();
             System::Void set(float);
@@ -237,6 +409,11 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Halo blur applied to text glyphs in pixels.</summary>
+        property float TextHaloBlur { float get(); System::Void set(float); }
+
+        // ---- Paint: Icon ----
 
         /// <summary>Icon opacity (0.0 – 1.0).</summary>
         property float IconOpacity
@@ -265,6 +442,9 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Icon halo blur in pixels.</summary>
+        property float IconHaloBlur { float get(); System::Void set(float); }
     };
 
     // =========================================================================
