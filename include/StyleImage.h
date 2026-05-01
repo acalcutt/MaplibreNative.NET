@@ -24,6 +24,12 @@ namespace DOTNET_NAMESPACE
     internal:
         StyleImage(System::String^ id, System::UInt32 width, System::UInt32 height,
                    System::Single pixelRatio, System::Boolean sdf)
-            : Id(id), Width(width), Height(height), PixelRatio(pixelRatio), Sdf(sdf) {}
+        {
+            Id = id;
+            Width = width;
+            Height = height;
+            PixelRatio = pixelRatio;
+            Sdf = sdf;
+        }
     };
 }

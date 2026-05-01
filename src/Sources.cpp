@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Sources.h"
 #include "PremultipliedImage.h"
 

@@ -27,13 +27,17 @@ namespace DOTNET_NAMESPACE
         property System::Boolean EnablePlacementTransitions;
 
         TransitionOptions()
-            : EnablePlacementTransitions(true) {}
+        {
+            EnablePlacementTransitions = true;
+        }
 
         TransitionOptions(System::Nullable<System::Int64> durationMs,
                           System::Nullable<System::Int64> delayMs,
                           System::Boolean enablePlacementTransitions)
-            : DurationMilliseconds(durationMs),
-              DelayMilliseconds(delayMs),
-              EnablePlacementTransitions(enablePlacementTransitions) {}
+        {
+            DurationMilliseconds = durationMs;
+            DelayMilliseconds = delayMs;
+            EnablePlacementTransitions = enablePlacementTransitions;
+        }
     };
 }

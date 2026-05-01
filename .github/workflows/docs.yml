@@ -1,0 +1,97 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-docs:
+    name: Build documentation
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Enable Git long paths
+        run: git config --global core.longpaths true
+
+      - name: Set up MSVC developer tools
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Get vcpkg commit ID
+        id: vcpkg-id
+        shell: pwsh
+        run: |
+          $id = git -C dependencies/maplibre-native/platform/windows/vendor/vcpkg rev-parse HEAD
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "commit_id=$id"
+
+      - name: Cache vcpkg binary cache
+        uses: actions/cache@v4
+        with:
+          path: dependencies/maplibre-native/platform/windows/vendor/vcpkg/archives
+          key: vcpkg-x64-windows-${{ steps.vcpkg-id.outputs.commit_id }}
+
+      - name: Bootstrap vcpkg
+        run: |
+          & "dependencies\maplibre-native\platform\windows\vendor\vcpkg\bootstrap-vcpkg.bat" -disableMetrics
+
+      - name: Configure CMake
+        shell: pwsh
+        env:
+          VCPKG_BINARY_SOURCES: "clear;files,${{ github.workspace }}\\dependencies\\maplibre-native\\platform\\windows\\vendor\\vcpkg\\archives,readwrite"
+        run: |
+          $maxAttempts = 3
+          for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+            cmake -B build -G "Visual Studio 17 2022" -A x64 `
+              -DMLN_WITH_OPENGL=ON `
+              -DMLN_WITH_EGL=OFF `
+              -DMLN_WITH_VULKAN=OFF `
+              "-DCMAKE_CXX_FLAGS=/wd4267" `
+              "-DMAPLIBRE_NET_DOTNET_VERSION=net9.0"
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -lt $maxAttempts) {
+              Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue
+            } else {
+              exit $LASTEXITCODE
+            }
+          }
+
+      - name: Build (Release)
+        run: cmake --build build --target mbgl-dotnet --config Release --parallel
+
+      - name: Install docfx
+        run: dotnet tool install -g docfx
+
+      - name: Build documentation
+        run: docfx docs/docfx.json
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

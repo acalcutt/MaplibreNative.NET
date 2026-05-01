@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Layers.h"
 
 #include <mbgl/style/layers/fill_layer.hpp>

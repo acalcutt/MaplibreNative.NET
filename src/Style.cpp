@@ -161,17 +161,17 @@ namespace DOTNET_NAMESPACE
     static Layer^ WrapLayer(mbgl::style::Layer* raw)
     {
         if (!raw) return nullptr;
-        if (auto* p = raw->as<mbgl::style::FillLayer>())          return gcnew FillLayer(p);
-        if (auto* p = raw->as<mbgl::style::LineLayer>())          return gcnew LineLayer(p);
-        if (auto* p = raw->as<mbgl::style::CircleLayer>())        return gcnew CircleLayer(p);
-        if (auto* p = raw->as<mbgl::style::SymbolLayer>())        return gcnew SymbolLayer(p);
-        if (auto* p = raw->as<mbgl::style::RasterLayer>())        return gcnew RasterLayer(p);
-        if (auto* p = raw->as<mbgl::style::BackgroundLayer>())    return gcnew BackgroundLayer(p);
-        if (auto* p = raw->as<mbgl::style::HeatmapLayer>())       return gcnew HeatmapLayer(p);
-        if (auto* p = raw->as<mbgl::style::HillshadeLayer>())     return gcnew HillshadeLayer(p);
-        if (auto* p = raw->as<mbgl::style::FillExtrusionLayer>()) return gcnew FillExtrusionLayer(p);
-        if (auto* p = raw->as<mbgl::style::ColorReliefLayer>())   return gcnew ColorReliefLayer(p);
-        if (auto* p = raw->as<mbgl::style::LocationIndicatorLayer>()) return gcnew LocationIndicatorLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::FillLayer*>(raw))             return gcnew FillLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::LineLayer*>(raw))             return gcnew LineLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::CircleLayer*>(raw))           return gcnew CircleLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::SymbolLayer*>(raw))           return gcnew SymbolLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::RasterLayer*>(raw))           return gcnew RasterLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::BackgroundLayer*>(raw))       return gcnew BackgroundLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::HeatmapLayer*>(raw))          return gcnew HeatmapLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::HillshadeLayer*>(raw))        return gcnew HillshadeLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::FillExtrusionLayer*>(raw))    return gcnew FillExtrusionLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::ColorReliefLayer*>(raw))      return gcnew ColorReliefLayer(p);
+        if (auto* p = dynamic_cast<mbgl::style::LocationIndicatorLayer*>(raw)) return gcnew LocationIndicatorLayer(p);
         // Unknown type — return base Layer wrapper
         return gcnew Layer(raw);
     }
@@ -491,7 +491,7 @@ namespace DOTNET_NAMESPACE
     {
         auto src = std::make_unique<mbgl::style::VectorSource>(
             Convert::ToStdString(sourceId),
-            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)));
+            mbgl::variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)));
         auto* raw = src.get();
         NativePointer->addSource(std::move(src));
         return gcnew VectorSource(raw);
@@ -501,7 +501,7 @@ namespace DOTNET_NAMESPACE
     {
         auto src = std::make_unique<mbgl::style::RasterSource>(
             Convert::ToStdString(sourceId),
-            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
+            mbgl::variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
             tileSize);
         auto* raw = src.get();
         NativePointer->addSource(std::move(src));
@@ -512,7 +512,7 @@ namespace DOTNET_NAMESPACE
     {
         auto src = std::make_unique<mbgl::style::RasterDEMSource>(
             Convert::ToStdString(sourceId),
-            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
+            mbgl::variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
             tileSize);
         auto* raw = src.get();
         NativePointer->addSource(std::move(src));

@@ -1,0 +1,43 @@
+{
+    "metadata": [
+        {
+            "src": [
+                {
+                    "src": "../",
+                    "files": ["build/Release/MaplibreNative.NET.dll"]
+                }
+            ],
+            "dest": "api",
+            "includePrivateMembers": false,
+            "disableGitFeatures": false,
+            "disableDefaultFilter": false
+        }
+    ],
+    "build": {
+        "content": [
+            {
+                "files": ["**/*.yml", "**/*.md"],
+                "src": ".",
+                "exclude": ["_site/**", "obj/**"]
+            }
+        ],
+        "resource": [
+            {
+                "files": ["images/**"]
+            }
+        ],
+        "output": "_site",
+        "template": ["default", "modern"],
+        "globalMetadata": {
+            "_appName": "MaplibreNative.NET",
+            "_appTitle": "MaplibreNative.NET",
+            "_appFooter": "MaplibreNative.NET — .NET wrapper for maplibre-native",
+            "_enableSearch": true
+        },
+        "fileMetadata": {},
+        "postProcessors": [],
+        "keepFileLink": false,
+        "cleanupCacheHistory": false,
+        "disableGitFeatures": false
+    }
+}

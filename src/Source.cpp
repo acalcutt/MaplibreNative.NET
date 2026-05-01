@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Source.h"
 
 #include <mbgl/style/source.hpp>
