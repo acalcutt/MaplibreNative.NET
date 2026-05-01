@@ -27,40 +27,32 @@ namespace DOTNET_NAMESPACE
         System::String^ GetURL();
         System::String^ GetName();
 
-        /*
-        CameraOptions^ GetDefaultCamera();
-        TransitionOptions^ GetTransitionOptions();
-        System::Void SetTransitionOptions(TransitionOptions^ options);
-        Light* getLight();
-        const Light* getLight() const;
+        // GeoJSON sources
+        /// <summary>Add a GeoJSON source that fetches its data from a URL.</summary>
+        System::Void AddGeoJsonSource(System::String^ sourceId, System::String^ url);
+        /// <summary>Update the URL of an existing GeoJSON source (no-op if source not found or wrong type).</summary>
+        System::Void SetGeoJsonSourceUrl(System::String^ sourceId, System::String^ url);
+        /// <summary>Set the data of an existing GeoJSON source from an inline GeoJSON string.</summary>
+        System::Void SetGeoJsonSourceData(System::String^ sourceId, System::String^ geojsonString);
+        /// <summary>Remove a source by id. Returns true if removed.</summary>
+        System::Boolean RemoveSource(System::String^ sourceId);
+        /// <summary>Returns true if a source with the given id exists.</summary>
+        System::Boolean HasSource(System::String^ sourceId);
 
-        void setLight(std::unique_ptr<Light>);
+        // Circle layers
+        /// <summary>
+        /// Add a circle layer above all existing layers.
+        /// color: CSS hex string e.g. "#ff0000".
+        /// filter: optional JSON expression string e.g. "["==", ["get","type"], "wifi"]" or empty/null.
+        /// </summary>
+        System::Void AddCircleLayer(System::String^ layerId, System::String^ sourceId,
+                                    System::String^ color, float radius, float opacity,
+                                    System::String^ filterJson);
+        /// <summary>Remove a layer by id. Returns true if removed.</summary>
+        System::Boolean RemoveLayer(System::String^ layerId);
+        /// <summary>Returns true if a layer with the given id exists.</summary>
+        System::Boolean HasLayer(System::String^ layerId);
 
-        // Images
-        optional<Image> getImage(const std::string&) const;
-        void addImage(std::unique_ptr<Image>);
-        void removeImage(const std::string&);
-
-        // Sources
-        std::vector<      Source*> getSources();
-        std::vector<const Source*> getSources() const;
-
-        Source* getSource(const std::string&);
-        const Source* getSource(const std::string&) const;
-
-        void addSource(std::unique_ptr<Source>);
-        std::unique_ptr<Source> removeSource(const std::string& sourceID);
-
-        // Layers
-        std::vector<      Layer*> getLayers();
-        std::vector<const Layer*> getLayers() const;
-
-        Layer* getLayer(const std::string&);
-        const Layer* getLayer(const std::string&) const;
-
-        void addLayer(std::unique_ptr<Layer>, const optional<std::string>& beforeLayerID = {});
-        std::unique_ptr<Layer> removeLayer(const std::string& layerID);
-        */
     internal:
         Style(NativePointerHolder<mbgl::style::Style>^ nativePointerHolder);
     };
