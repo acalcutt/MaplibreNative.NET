@@ -13,6 +13,8 @@ endif()
 
 add_library(mbgl-dotnet SHARED)
 
+set(MAPLIBRE_NET_DOTNET_VERSION "net8.0" CACHE STRING "Target .NET version for the C++/CLI wrapper (e.g. net8.0, net9.0)")
+
 set(ASSEMBLY_NAME "MaplibreNative.NET")
 
 set_target_properties(
@@ -20,7 +22,7 @@ set_target_properties(
 	PROPERTIES
 		COMMON_LANGUAGE_RUNTIME "NetCore"
 		VS_GLOBAL_CLRSupport "NetCore"
-		VS_GLOBAL_TargetFramework "net8.0"
+		VS_GLOBAL_TargetFramework "${MAPLIBRE_NET_DOTNET_VERSION}"
 		OUTPUT_NAME ${ASSEMBLY_NAME}
 )
 

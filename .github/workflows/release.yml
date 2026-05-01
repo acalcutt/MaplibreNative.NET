@@ -52,7 +52,7 @@ jobs:
       release_type: ${{ steps.check.outputs.release_type }}
 
   build:
-    name: Build Windows ${{ matrix.arch }}
+    name: Build Windows ${{ matrix.arch }} ${{ matrix.dotnet }}
     runs-on: ${{ matrix.runs-on }}
     needs: release-check
     if: ${{ needs.release-check.outputs.published == 'false' }}
@@ -60,6 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        dotnet: [net8.0, net9.0]
         include:
           - runs-on: windows-latest
             arch: x64
@@ -115,7 +116,8 @@ jobs:
               -DMLN_WITH_OPENGL=ON `
               -DMLN_WITH_EGL=OFF `
               -DMLN_WITH_VULKAN=OFF `
-              "-DCMAKE_CXX_FLAGS=/wd4267"
+              "-DCMAKE_CXX_FLAGS=/wd4267" `
+              "-DMAPLIBRE_NET_DOTNET_VERSION=${{ matrix.dotnet }}"
             if ($LASTEXITCODE -eq 0) { break }
             if ($attempt -lt $maxAttempts) {
               Write-Host "Attempt $attempt failed (exit $LASTEXITCODE), cleaning and retrying in 30s..."
@@ -133,6 +135,7 @@ jobs:
         run: |
           $version = "${{ needs.release-check.outputs.version }}"
           $arch    = "${{ matrix.arch }}"
+          $dotnet  = "${{ matrix.dotnet }}"
           $outDir  = "build\Release"
 
           New-Item -ItemType Directory -Path publish -Force
@@ -148,15 +151,15 @@ jobs:
             Where-Object { $_.Name -ne "MaplibreNative.NET.dll" } |
             Copy-Item -Destination publish\
 
-          Compress-Archive -Path "publish\*" -DestinationPath "MaplibreNative.NET-v${version}-win-${arch}.zip"
-          Write-Host "Packaged: MaplibreNative.NET-v${version}-win-${arch}.zip"
+          Compress-Archive -Path "publish\*" -DestinationPath "MaplibreNative.NET-v${version}-win-${arch}-${dotnet}.zip"
+          Write-Host "Packaged: MaplibreNative.NET-v${version}-win-${arch}-${dotnet}.zip"
           Get-ChildItem publish\
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-artifacts-${{ matrix.arch }}
-          path: MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-${{ matrix.arch }}.zip
+          name: release-artifacts-${{ matrix.arch }}-${{ matrix.dotnet }}
+          path: MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-${{ matrix.arch }}-${{ matrix.dotnet }}.zip
           retention-days: 7
 
   release:
