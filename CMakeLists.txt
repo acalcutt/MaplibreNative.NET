@@ -93,6 +93,10 @@ target_sources(
 	${PROJECT_SOURCE_DIR}/src/ShaderRegistry.cpp
 	${PROJECT_SOURCE_DIR}/src/Size.cpp
 	${PROJECT_SOURCE_DIR}/src/Style.cpp
+	${PROJECT_SOURCE_DIR}/src/Layer.cpp
+	${PROJECT_SOURCE_DIR}/src/Layers.cpp
+	${PROJECT_SOURCE_DIR}/src/Source.cpp
+	${PROJECT_SOURCE_DIR}/src/Sources.cpp
 	${PROJECT_SOURCE_DIR}/src/TileCoordinate.cpp
 	${PROJECT_SOURCE_DIR}/src/TransformState.cpp
 	${PROJECT_SOURCE_DIR}/src/UnassociatedImage.cpp

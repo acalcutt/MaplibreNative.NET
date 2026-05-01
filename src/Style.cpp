@@ -1,12 +1,28 @@
 #include "Convert.h"
 #include "FileSource.h"
 #include "Style.h"
+#include "Layers.h"
+#include "Sources.h"
 #include <mbgl/actor/scheduler.hpp>
 #include <mbgl/style/style.hpp>
 #include <mbgl/style/sources/geojson_source.hpp>
+#include <mbgl/style/sources/vector_source.hpp>
+#include <mbgl/style/sources/raster_source.hpp>
+#include <mbgl/style/sources/raster_dem_source.hpp>
+#include <mbgl/style/sources/image_source.hpp>
+#include <mbgl/style/layers/fill_layer.hpp>
+#include <mbgl/style/layers/line_layer.hpp>
 #include <mbgl/style/layers/circle_layer.hpp>
+#include <mbgl/style/layers/symbol_layer.hpp>
+#include <mbgl/style/layers/raster_layer.hpp>
+#include <mbgl/style/layers/background_layer.hpp>
+#include <mbgl/style/layers/heatmap_layer.hpp>
+#include <mbgl/style/layers/hillshade_layer.hpp>
+#include <mbgl/style/layers/fill_extrusion_layer.hpp>
+#include <mbgl/style/layers/color_relief_layer.hpp>
 #include <mbgl/style/conversion/geojson.hpp>
 #include <mbgl/util/color.hpp>
+#include <mbgl/util/geo.hpp>
 
 namespace DOTNET_NAMESPACE
 {
@@ -129,5 +145,243 @@ namespace DOTNET_NAMESPACE
     {
         std::string id = Convert::ToStdString(layerId);
         return NativePointer->getLayer(id) != nullptr;
+    }
+
+    // -------------------------------------------------------------------------
+    // Helper: wrap a native Layer* as the correct managed concrete type
+    // -------------------------------------------------------------------------
+    static Layer^ WrapLayer(mbgl::style::Layer* raw)
+    {
+        if (!raw) return nullptr;
+        if (auto* p = raw->as<mbgl::style::FillLayer>())          return gcnew FillLayer(p);
+        if (auto* p = raw->as<mbgl::style::LineLayer>())          return gcnew LineLayer(p);
+        if (auto* p = raw->as<mbgl::style::CircleLayer>())        return gcnew CircleLayer(p);
+        if (auto* p = raw->as<mbgl::style::SymbolLayer>())        return gcnew SymbolLayer(p);
+        if (auto* p = raw->as<mbgl::style::RasterLayer>())        return gcnew RasterLayer(p);
+        if (auto* p = raw->as<mbgl::style::BackgroundLayer>())    return gcnew BackgroundLayer(p);
+        if (auto* p = raw->as<mbgl::style::HeatmapLayer>())       return gcnew HeatmapLayer(p);
+        if (auto* p = raw->as<mbgl::style::HillshadeLayer>())     return gcnew HillshadeLayer(p);
+        if (auto* p = raw->as<mbgl::style::FillExtrusionLayer>()) return gcnew FillExtrusionLayer(p);
+        if (auto* p = raw->as<mbgl::style::ColorReliefLayer>())   return gcnew ColorReliefLayer(p);
+        // Unknown type — return base Layer wrapper
+        return gcnew Layer(raw);
+    }
+
+    // -------------------------------------------------------------------------
+    // Helper: wrap a native Source* as the correct managed concrete type
+    // -------------------------------------------------------------------------
+    static Source^ WrapSource(mbgl::style::Source* raw)
+    {
+        if (!raw) return nullptr;
+        if (auto* p = raw->as<mbgl::style::GeoJSONSource>())    return gcnew GeoJSONSource(p);
+        if (auto* p = raw->as<mbgl::style::VectorSource>())     return gcnew VectorSource(p);
+        if (auto* p = raw->as<mbgl::style::RasterDEMSource>())  return gcnew RasterDEMSource(p);
+        if (auto* p = raw->as<mbgl::style::RasterSource>())     return gcnew RasterSource(p);
+        if (auto* p = raw->as<mbgl::style::ImageSource>())      return gcnew ImageSource(p);
+        return gcnew Source(raw);
+    }
+
+    // -------------------------------------------------------------------------
+    // Layer retrieval
+    // -------------------------------------------------------------------------
+
+    Layer^ Style::GetLayer(System::String^ layerId)
+    {
+        auto* raw = NativePointer->getLayer(Convert::ToStdString(layerId));
+        return WrapLayer(raw);
+    }
+
+    System::Collections::Generic::List<Layer^>^ Style::GetLayers()
+    {
+        auto result = gcnew System::Collections::Generic::List<Layer^>();
+        for (auto* raw : NativePointer->getLayers())
+        {
+            result->Add(WrapLayer(raw));
+        }
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Source retrieval
+    // -------------------------------------------------------------------------
+
+    Source^ Style::GetSource(System::String^ sourceId)
+    {
+        auto* raw = NativePointer->getSource(Convert::ToStdString(sourceId));
+        return WrapSource(raw);
+    }
+
+    System::Collections::Generic::List<Source^>^ Style::GetSources()
+    {
+        auto result = gcnew System::Collections::Generic::List<Source^>();
+        for (auto* raw : NativePointer->getSources())
+        {
+            result->Add(WrapSource(raw));
+        }
+        return result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Add layer helpers
+    // -------------------------------------------------------------------------
+
+    FillLayer^ Style::AddFillLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::FillLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew FillLayer(raw);
+    }
+
+    LineLayer^ Style::AddLineLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::LineLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew LineLayer(raw);
+    }
+
+    CircleLayer^ Style::AddCircleLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::CircleLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew CircleLayer(raw);
+    }
+
+    SymbolLayer^ Style::AddSymbolLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::SymbolLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew SymbolLayer(raw);
+    }
+
+    RasterLayer^ Style::AddRasterLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::RasterLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew RasterLayer(raw);
+    }
+
+    BackgroundLayer^ Style::AddBackgroundLayer(System::String^ layerId)
+    {
+        auto layer = std::make_unique<mbgl::style::BackgroundLayer>(Convert::ToStdString(layerId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew BackgroundLayer(raw);
+    }
+
+    HeatmapLayer^ Style::AddHeatmapLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::HeatmapLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew HeatmapLayer(raw);
+    }
+
+    HillshadeLayer^ Style::AddHillshadeLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::HillshadeLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew HillshadeLayer(raw);
+    }
+
+    FillExtrusionLayer^ Style::AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::FillExtrusionLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew FillExtrusionLayer(raw);
+    }
+
+    ColorReliefLayer^ Style::AddColorReliefLayer(System::String^ layerId, System::String^ sourceId)
+    {
+        auto layer = std::make_unique<mbgl::style::ColorReliefLayer>(
+            Convert::ToStdString(layerId), Convert::ToStdString(sourceId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew ColorReliefLayer(raw);
+    }
+
+    // -------------------------------------------------------------------------
+    // Add source helpers
+    // -------------------------------------------------------------------------
+
+    GeoJSONSource^ Style::AddGeoJsonSource(System::String^ sourceId)
+    {
+        auto src = std::make_unique<mbgl::style::GeoJSONSource>(Convert::ToStdString(sourceId));
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew GeoJSONSource(raw);
+    }
+
+    GeoJSONSource^ Style::AddGeoJsonSourceFromUrl(System::String^ sourceId, System::String^ url)
+    {
+        auto src = std::make_unique<mbgl::style::GeoJSONSource>(Convert::ToStdString(sourceId));
+        src->setURL(Convert::ToStdString(url));
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew GeoJSONSource(raw);
+    }
+
+    VectorSource^ Style::AddVectorSource(System::String^ sourceId, System::String^ url)
+    {
+        auto src = std::make_unique<mbgl::style::VectorSource>(
+            Convert::ToStdString(sourceId),
+            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)));
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew VectorSource(raw);
+    }
+
+    RasterSource^ Style::AddRasterSource(System::String^ sourceId, System::String^ url, System::UInt16 tileSize)
+    {
+        auto src = std::make_unique<mbgl::style::RasterSource>(
+            Convert::ToStdString(sourceId),
+            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
+            tileSize);
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew RasterSource(raw);
+    }
+
+    RasterDEMSource^ Style::AddRasterDemSource(System::String^ sourceId, System::String^ url, System::UInt16 tileSize)
+    {
+        auto src = std::make_unique<mbgl::style::RasterDEMSource>(
+            Convert::ToStdString(sourceId),
+            variant<std::string, mbgl::Tileset>(Convert::ToStdString(url)),
+            tileSize);
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew RasterDEMSource(raw);
+    }
+
+    ImageSource^ Style::AddImageSource(System::String^ sourceId, System::String^ url, array<LatLng^>^ coordinates)
+    {
+        std::array<mbgl::LatLng, 4> coords = {
+            mbgl::LatLng(coordinates[0]->Latitude, coordinates[0]->Longitude),
+            mbgl::LatLng(coordinates[1]->Latitude, coordinates[1]->Longitude),
+            mbgl::LatLng(coordinates[2]->Latitude, coordinates[2]->Longitude),
+            mbgl::LatLng(coordinates[3]->Latitude, coordinates[3]->Longitude)
+        };
+        auto src = std::make_unique<mbgl::style::ImageSource>(Convert::ToStdString(sourceId), coords);
+        if (url && url->Length > 0)
+        {
+            src->setURL(Convert::ToStdString(url));
+        }
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew ImageSource(raw);
     }
 }
