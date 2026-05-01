@@ -426,6 +426,34 @@ namespace DOTNET_NAMESPACE
             static_cast<mbgl::style::TranslateAnchorType>(value)));
     }
 
+    System::String^ LineLayer::Gradient::get()
+    {
+        const auto& pv = Impl()->getLineGradient();
+        if (!pv.isUndefined())
+        {
+            mbgl::Value serialized = pv.getExpression().serialize();
+            return msclr::interop::marshal_as<System::String^>(ValueToJsonString(serialized));
+        }
+        return System::String::Empty;
+    }
+
+    System::Void LineLayer::Gradient::set(System::String^ value)
+    {
+        if (value == nullptr || value->Length == 0) return;
+        std::string json = msclr::interop::marshal_as<std::string>(value);
+        mbgl::style::conversion::JSDocument doc;
+        doc.Parse(json.c_str());
+        if (doc.HasParseError())
+            throw gcnew System::ArgumentException("Invalid gradient JSON: parse error");
+        mbgl::style::conversion::Error error;
+        auto gradient = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
+            mbgl::style::conversion::Convertible(&doc), error);
+        if (!gradient)
+            throw gcnew System::ArgumentException(
+                msclr::interop::marshal_as<System::String^>("Invalid gradient expression: " + error.message));
+        Impl()->setLineGradient(*gradient);
+    }
+
     // =========================================================================
     // CircleLayer
     // =========================================================================
@@ -1435,8 +1463,33 @@ namespace DOTNET_NAMESPACE
         Impl()->setHeatmapWeight(mbgl::style::PropertyValue<float>(value));
     }
 
-    // =========================================================================
-    // HillshadeLayer
+    System::String^ HeatmapLayer::Color::get()
+    {
+        const auto& pv = Impl()->getHeatmapColor();
+        if (!pv.isUndefined())
+        {
+            mbgl::Value serialized = pv.getExpression().serialize();
+            return msclr::interop::marshal_as<System::String^>(ValueToJsonString(serialized));
+        }
+        return System::String::Empty;
+    }
+
+    System::Void HeatmapLayer::Color::set(System::String^ value)
+    {
+        if (value == nullptr || value->Length == 0) return;
+        std::string json = msclr::interop::marshal_as<std::string>(value);
+        mbgl::style::conversion::JSDocument doc;
+        doc.Parse(json.c_str());
+        if (doc.HasParseError())
+            throw gcnew System::ArgumentException("Invalid heatmap color JSON: parse error");
+        mbgl::style::conversion::Error error;
+        auto colorRamp = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
+            mbgl::style::conversion::Convertible(&doc), error);
+        if (!colorRamp)
+            throw gcnew System::ArgumentException(
+                msclr::interop::marshal_as<System::String^>("Invalid heatmap color expression: " + error.message));
+        Impl()->setHeatmapColor(*colorRamp);
+    }
     // =========================================================================
 
     HillshadeLayer::HillshadeLayer(mbgl::style::HillshadeLayer* layer) : Layer(layer) {}

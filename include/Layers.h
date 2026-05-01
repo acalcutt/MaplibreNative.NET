@@ -167,10 +167,18 @@ namespace DOTNET_NAMESPACE
 
         /// <summary>Frame of reference for Translate: Map or Viewport.</summary>
         property TranslateAnchorType TranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
-    };
 
-    // =========================================================================
-    // CircleLayer
+        /// <summary>
+        /// Line gradient as a MapLibre expression JSON string (requires lineMetrics=true on the source).
+        /// Maps line progress (0–1) to a color. Returns empty string when unset.
+        /// Throws ArgumentException on invalid expression JSON.
+        /// </summary>
+        property System::String^ Gradient
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+    };
     // =========================================================================
 
     /// <summary>Wraps an mbgl::style::CircleLayer.</summary>
@@ -618,6 +626,17 @@ namespace DOTNET_NAMESPACE
         {
             float get();
             System::Void set(float);
+        }
+
+        /// <summary>
+        /// Color ramp as a MapLibre expression JSON string that maps heatmap density (0–1) to a color.
+        /// Returns empty string when unset (uses the default rainbow ramp).
+        /// Throws ArgumentException on invalid expression JSON.
+        /// </summary>
+        property System::String^ Color
+        {
+            System::String^ get();
+            System::Void set(System::String^);
         }
     };
 

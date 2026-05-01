@@ -1,6 +1,7 @@
 #pragma once
 #include "Source.h"
 #include "LatLng.h"
+#include "PremultipliedImage.h"
 
 namespace DOTNET_NAMESPACE
 {
@@ -187,5 +188,11 @@ namespace DOTNET_NAMESPACE
             array<LatLng^>^ get();
             System::Void set(array<LatLng^>^);
         }
+
+        /// <summary>
+        /// Update the pixel data of the image source at runtime.
+        /// The image is cloned internally; the caller retains ownership of <paramref name="image"/>.
+        /// </summary>
+        System::Void SetImage(PremultipliedImage^ image);
     };
 }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Sources.h"
+#include "PremultipliedImage.h"
 
 #include <mbgl/style/sources/geojson_source.hpp>
 #include <mbgl/style/sources/vector_source.hpp>
@@ -162,5 +163,11 @@ namespace DOTNET_NAMESPACE
             mbgl::LatLng(value[3]->Latitude, value[3]->Longitude)
         };
         Impl()->setCoordinates(coords);
+    }
+
+    System::Void ImageSource::SetImage(PremultipliedImage^ image)
+    {
+        if (image == nullptr) return;
+        Impl()->setImage(image->NativePointer->clone());
     }
 }
