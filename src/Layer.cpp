@@ -177,7 +177,7 @@ namespace DOTNET_NAMESPACE
         }
 
         std::string json = msclr::interop::marshal_as<std::string>(filterJson);
-        mbgl::style::conversion::JSDocument doc;
+        mbgl::JSDocument doc;
         doc.Parse(json.c_str());
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid filter JSON: parse error");
@@ -187,7 +187,7 @@ namespace DOTNET_NAMESPACE
             mbgl::style::conversion::Convertible(&doc), error);
         if (!filter)
             throw gcnew System::ArgumentException(
-                msclr::interop::marshal_as<System::String^>("Invalid filter expression: " + error.message));
+                gcnew System::String(("Invalid filter expression: " + error.message).c_str()));
 
         _layer->setFilter(*filter);
     }

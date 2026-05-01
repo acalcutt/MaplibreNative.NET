@@ -440,7 +440,7 @@ namespace DOTNET_NAMESPACE
     {
         if (value == nullptr || value->Length == 0) return;
         std::string json = msclr::interop::marshal_as<std::string>(value);
-        mbgl::style::conversion::JSDocument doc;
+        mbgl::JSDocument doc;
         doc.Parse(json.c_str());
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid gradient JSON: parse error");
@@ -449,7 +449,7 @@ namespace DOTNET_NAMESPACE
             mbgl::style::conversion::Convertible(&doc), error);
         if (!gradient)
             throw gcnew System::ArgumentException(
-                msclr::interop::marshal_as<System::String^>("Invalid gradient expression: " + error.message));
+                gcnew System::String(("Invalid gradient expression: " + error.message).c_str()));
         Impl()->setLineGradient(*gradient);
     }
 
@@ -1477,7 +1477,7 @@ namespace DOTNET_NAMESPACE
     {
         if (value == nullptr || value->Length == 0) return;
         std::string json = msclr::interop::marshal_as<std::string>(value);
-        mbgl::style::conversion::JSDocument doc;
+        mbgl::JSDocument doc;
         doc.Parse(json.c_str());
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid heatmap color JSON: parse error");
@@ -1486,7 +1486,7 @@ namespace DOTNET_NAMESPACE
             mbgl::style::conversion::Convertible(&doc), error);
         if (!colorRamp)
             throw gcnew System::ArgumentException(
-                msclr::interop::marshal_as<System::String^>("Invalid heatmap color expression: " + error.message));
+                gcnew System::String(("Invalid heatmap color expression: " + error.message).c_str()));
         Impl()->setHeatmapColor(*colorRamp);
     }
     // =========================================================================
@@ -1709,7 +1709,7 @@ namespace DOTNET_NAMESPACE
             return;
 
         std::string json = msclr::interop::marshal_as<std::string>(value);
-        mbgl::style::conversion::JSDocument doc;
+        mbgl::JSDocument doc;
         doc.Parse(json.c_str());
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid color ramp JSON: parse error");
@@ -1719,7 +1719,7 @@ namespace DOTNET_NAMESPACE
             mbgl::style::conversion::Convertible(&doc), error);
         if (!colorRamp)
             throw gcnew System::ArgumentException(
-                msclr::interop::marshal_as<System::String^>("Invalid color ramp expression: " + error.message));
+                gcnew System::String(("Invalid color ramp expression: " + error.message).c_str()));
 
         Impl()->setColorReliefColor(*colorRamp);
     }
@@ -1745,7 +1745,8 @@ namespace DOTNET_NAMESPACE
     }
     System::Void LocationIndicatorLayer::BearingImage::set(System::String^ value)
     {
-        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        System::String^ safeValue = value != nullptr ? value : System::String::Empty;
+        std::string raw = msclr::interop::marshal_as<std::string>(safeValue);
         Impl()->setBearingImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
             mbgl::style::expression::Image(raw)));
     }
@@ -1758,7 +1759,8 @@ namespace DOTNET_NAMESPACE
     }
     System::Void LocationIndicatorLayer::ShadowImage::set(System::String^ value)
     {
-        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        System::String^ safeValue = value != nullptr ? value : System::String::Empty;
+        std::string raw = msclr::interop::marshal_as<std::string>(safeValue);
         Impl()->setShadowImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
             mbgl::style::expression::Image(raw)));
     }
@@ -1771,7 +1773,8 @@ namespace DOTNET_NAMESPACE
     }
     System::Void LocationIndicatorLayer::TopImage::set(System::String^ value)
     {
-        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        System::String^ safeValue = value != nullptr ? value : System::String::Empty;
+        std::string raw = msclr::interop::marshal_as<std::string>(safeValue);
         Impl()->setTopImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
             mbgl::style::expression::Image(raw)));
     }
@@ -1848,7 +1851,7 @@ namespace DOTNET_NAMESPACE
 
     System::String^ LocationIndicatorLayer::AccuracyRadiusBorderColor::get()
     {
-        return ColorToString(GetColor(Impl()->getAccuracyRadiusBorderColor(), mbgl::Color(0, 0, 0, 0)));
+        return GetColor(Impl()->getAccuracyRadiusBorderColor(), "rgba(0,0,0,0)");
     }
     System::Void LocationIndicatorLayer::AccuracyRadiusBorderColor::set(System::String^ value)
     {
@@ -1857,7 +1860,7 @@ namespace DOTNET_NAMESPACE
 
     System::String^ LocationIndicatorLayer::AccuracyRadiusColor::get()
     {
-        return ColorToString(GetColor(Impl()->getAccuracyRadiusColor(), mbgl::Color(0, 0, 0, 0)));
+        return GetColor(Impl()->getAccuracyRadiusColor(), "rgba(0,0,0,0)");
     }
     System::Void LocationIndicatorLayer::AccuracyRadiusColor::set(System::String^ value)
     {

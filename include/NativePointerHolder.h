@@ -32,7 +32,7 @@ namespace DOTNET_NAMESPACE
         {
         }
 
-        NativePointerHolder(T* nativePointer) : NativePointer(nativePointer, true)
+        NativePointerHolder(T* nativePointer) : NativePointerHolder(nativePointer, true)
         {
         }
 
