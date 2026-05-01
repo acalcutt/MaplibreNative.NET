@@ -9,8 +9,7 @@
 
 ## 1.0.3
 ### ✨ Features and improvements
-
-### 🐞 Bug fixes
+- Add multiple release targets
 
 ## 1.0.2
 ### ✨ Features and improvements
