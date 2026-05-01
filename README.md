@@ -88,8 +88,6 @@ git clone --config core.longpaths=true --recurse-submodules -j8 https://github.c
 cd MaplibreNative.NET
 ```
 
-> **Note:** `--depth 1` is intentionally omitted. The `maplibre-native` submodule is pinned to a specific commit that may not be at a branch tip, which can cause shallow clones to fail.
-
 ### Installing vendor packages (vcpkg)
 
 This step downloads and builds all native dependencies via vcpkg. It only needs to be done once (results are cached).
