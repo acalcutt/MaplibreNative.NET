@@ -84,7 +84,7 @@ You can check other examples at the [Examples](https://github.com/tdcosta100/Map
 ### Downloading sources
 
 ```powershell
-git clone -j8 https://github.com/andrewpavlov/MaplibreNative.NET-ac.git
+git clone -j8 https://github.com/tdcosta100/MaplibreNative.NET.git
 cd MaplibreNative.NET-ac
 git submodule update --init dependencies/maplibre-native
 ```
