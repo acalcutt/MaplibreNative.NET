@@ -179,4 +179,18 @@ namespace DOTNET_NAMESPACE
         Horizontal,
         Vertical,
     };
+
+    /// <summary>Resampling method for raster tiles when scaling.</summary>
+    public enum class RasterResamplingType : System::Byte
+    {
+        Linear,
+        Nearest,
+    };
+
+    /// <summary>Frame of reference for the hillshade illumination direction.</summary>
+    public enum class HillshadeIlluminationAnchorType : System::Byte
+    {
+        Map,
+        Viewport,
+    };
 }

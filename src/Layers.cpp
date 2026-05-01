@@ -11,8 +11,14 @@
 #include <mbgl/style/layers/hillshade_layer.hpp>
 #include <mbgl/style/layers/fill_extrusion_layer.hpp>
 #include <mbgl/style/layers/color_relief_layer.hpp>
+#include <mbgl/style/conversion/color_ramp_property_value.hpp>
+#include <mbgl/style/rapidjson_conversion.hpp>
 #include <mbgl/util/color.hpp>
+#include <mbgl/util/rapidjson.hpp>
 #include <msclr/marshal_cppstd.h>
+
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 namespace
 {
@@ -56,6 +62,56 @@ namespace
                                      System::String^ def)
     {
         return pv.isConstant() ? ColorToString(pv.asConstant()) : def;
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers: serialize mbgl::Value to JSON string (used for expression props)
+    // -------------------------------------------------------------------------
+    static void WriteValue(rapidjson::Writer<rapidjson::StringBuffer>& writer,
+                           const mbgl::Value& value);
+
+    struct ValueWriter
+    {
+        rapidjson::Writer<rapidjson::StringBuffer>& writer;
+        void operator()(const mbgl::NullValue&) const { writer.Null(); }
+        void operator()(bool v) const { writer.Bool(v); }
+        void operator()(uint64_t v) const { writer.Uint64(v); }
+        void operator()(int64_t v) const { writer.Int64(v); }
+        void operator()(double v) const { writer.Double(v); }
+        void operator()(const std::string& v) const
+        {
+            writer.String(v.c_str(), static_cast<rapidjson::SizeType>(v.size()));
+        }
+        void operator()(const mapbox::util::recursive_wrapper<std::vector<mbgl::Value>>& rw) const
+        {
+            writer.StartArray();
+            for (const auto& item : rw.get()) WriteValue(writer, item);
+            writer.EndArray();
+        }
+        void operator()(const mapbox::util::recursive_wrapper<std::unordered_map<std::string, mbgl::Value>>& rw) const
+        {
+            writer.StartObject();
+            for (const auto& kv : rw.get())
+            {
+                writer.Key(kv.first.c_str(), static_cast<rapidjson::SizeType>(kv.first.size()));
+                WriteValue(writer, kv.second);
+            }
+            writer.EndObject();
+        }
+    };
+
+    static void WriteValue(rapidjson::Writer<rapidjson::StringBuffer>& writer,
+                           const mbgl::Value& value)
+    {
+        mbgl::Value::visit(value, ValueWriter{ writer });
+    }
+
+    static std::string ValueToJsonString(const mbgl::Value& value)
+    {
+        rapidjson::StringBuffer buf;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
+        WriteValue(writer, value);
+        return buf.GetString();
     }
 }
 
@@ -266,6 +322,26 @@ namespace DOTNET_NAMESPACE
     {
         Impl()->setLineJoin(mbgl::style::PropertyValue<mbgl::style::LineJoinType>(
             static_cast<mbgl::style::LineJoinType>(value)));
+    }
+
+    float LineLayer::MiterLimit::get()
+    {
+        return GetFloat(Impl()->getLineMiterLimit(), 2.0f);
+    }
+
+    System::Void LineLayer::MiterLimit::set(float value)
+    {
+        Impl()->setLineMiterLimit(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LineLayer::RoundLimit::get()
+    {
+        return GetFloat(Impl()->getLineRoundLimit(), 1.05f);
+    }
+
+    System::Void LineLayer::RoundLimit::set(float value)
+    {
+        Impl()->setLineRoundLimit(mbgl::style::PropertyValue<float>(value));
     }
 
     float LineLayer::SortKey::get()
@@ -1069,6 +1145,102 @@ namespace DOTNET_NAMESPACE
         Impl()->setIconHaloBlur(mbgl::style::PropertyValue<float>(value));
     }
 
+    IconTextFitType SymbolLayer::IconTextFit::get()
+    {
+        auto& pv = Impl()->getIconTextFit();
+        if (pv.isConstant())
+            return static_cast<IconTextFitType>(pv.asConstant());
+        return IconTextFitType::None;
+    }
+
+    System::Void SymbolLayer::IconTextFit::set(IconTextFitType value)
+    {
+        Impl()->setIconTextFit(mbgl::style::PropertyValue<mbgl::style::IconTextFitType>(
+            static_cast<mbgl::style::IconTextFitType>(value)));
+    }
+
+    cli::array<float>^ SymbolLayer::IconTextFitPadding::get()
+    {
+        auto& pv = Impl()->getIconTextFitPadding();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1], arr[2], arr[3] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f, 0.0f, 0.0f };
+    }
+
+    System::Void SymbolLayer::IconTextFitPadding::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 4) return;
+        std::array<float, 4> arr{ value[0], value[1], value[2], value[3] };
+        Impl()->setIconTextFitPadding(mbgl::style::PropertyValue<std::array<float, 4>>(arr));
+    }
+
+    cli::array<float>^ SymbolLayer::IconTranslate::get()
+    {
+        auto& pv = Impl()->getIconTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void SymbolLayer::IconTranslate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setIconTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType SymbolLayer::IconTranslateAnchor::get()
+    {
+        auto& pv = Impl()->getIconTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void SymbolLayer::IconTranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setIconTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
+    }
+
+    cli::array<float>^ SymbolLayer::TextTranslate::get()
+    {
+        auto& pv = Impl()->getTextTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void SymbolLayer::TextTranslate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setTextTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType SymbolLayer::TextTranslateAnchor::get()
+    {
+        auto& pv = Impl()->getTextTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void SymbolLayer::TextTranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setTextTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
+    }
+
     // =========================================================================
     // RasterLayer
     // =========================================================================
@@ -1150,6 +1322,20 @@ namespace DOTNET_NAMESPACE
         Impl()->setRasterFadeDuration(mbgl::style::PropertyValue<float>(value));
     }
 
+    RasterResamplingType RasterLayer::Resampling::get()
+    {
+        auto& pv = Impl()->getRasterResampling();
+        if (pv.isConstant())
+            return static_cast<RasterResamplingType>(pv.asConstant());
+        return RasterResamplingType::Linear;
+    }
+
+    System::Void RasterLayer::Resampling::set(RasterResamplingType value)
+    {
+        Impl()->setRasterResampling(mbgl::style::PropertyValue<mbgl::style::RasterResamplingType>(
+            static_cast<mbgl::style::RasterResamplingType>(value)));
+    }
+
     // =========================================================================
     // BackgroundLayer
     // =========================================================================
@@ -1179,6 +1365,21 @@ namespace DOTNET_NAMESPACE
     System::Void BackgroundLayer::Opacity::set(float value)
     {
         Impl()->setBackgroundOpacity(mbgl::style::PropertyValue<float>(value));
+    }
+
+    System::String^ BackgroundLayer::Pattern::get()
+    {
+        auto& pv = Impl()->getBackgroundPattern();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().id().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void BackgroundLayer::Pattern::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setBackgroundPattern(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
     }
 
     // =========================================================================
@@ -1293,6 +1494,21 @@ namespace DOTNET_NAMESPACE
         Impl()->setHillshadeAccentColor(mbgl::style::PropertyValue<mbgl::Color>(ParseColor(value)));
     }
 
+    HillshadeIlluminationAnchorType HillshadeLayer::IlluminationAnchor::get()
+    {
+        auto& pv = Impl()->getHillshadeIlluminationAnchor();
+        if (pv.isConstant())
+            return static_cast<HillshadeIlluminationAnchorType>(pv.asConstant());
+        return HillshadeIlluminationAnchorType::Viewport;
+    }
+
+    System::Void HillshadeLayer::IlluminationAnchor::set(HillshadeIlluminationAnchorType value)
+    {
+        Impl()->setHillshadeIlluminationAnchor(
+            mbgl::style::PropertyValue<mbgl::style::HillshadeIlluminationAnchorType>(
+                static_cast<mbgl::style::HillshadeIlluminationAnchorType>(value)));
+    }
+
     // =========================================================================
     // FillExtrusionLayer
     // =========================================================================
@@ -1354,6 +1570,53 @@ namespace DOTNET_NAMESPACE
         Impl()->setFillExtrusionVerticalGradient(mbgl::style::PropertyValue<bool>(value));
     }
 
+    System::String^ FillExtrusionLayer::Pattern::get()
+    {
+        auto& pv = Impl()->getFillExtrusionPattern();
+        if (pv.isConstant())
+            return gcnew System::String(pv.asConstant().id().c_str());
+        return System::String::Empty;
+    }
+
+    System::Void FillExtrusionLayer::Pattern::set(System::String^ value)
+    {
+        auto raw = msclr::interop::marshal_as<std::string>(value);
+        Impl()->setFillExtrusionPattern(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    cli::array<float>^ FillExtrusionLayer::Translate::get()
+    {
+        auto& pv = Impl()->getFillExtrusionTranslate();
+        if (pv.isConstant())
+        {
+            auto& arr = pv.asConstant();
+            return gcnew cli::array<float> { arr[0], arr[1] };
+        }
+        return gcnew cli::array<float> { 0.0f, 0.0f };
+    }
+
+    System::Void FillExtrusionLayer::Translate::set(cli::array<float>^ value)
+    {
+        if (value == nullptr || value->Length < 2) return;
+        std::array<float, 2> arr{ value[0], value[1] };
+        Impl()->setFillExtrusionTranslate(mbgl::style::PropertyValue<std::array<float, 2>>(arr));
+    }
+
+    TranslateAnchorType FillExtrusionLayer::TranslateAnchor::get()
+    {
+        auto& pv = Impl()->getFillExtrusionTranslateAnchor();
+        if (pv.isConstant())
+            return static_cast<TranslateAnchorType>(pv.asConstant());
+        return TranslateAnchorType::Map;
+    }
+
+    System::Void FillExtrusionLayer::TranslateAnchor::set(TranslateAnchorType value)
+    {
+        Impl()->setFillExtrusionTranslateAnchor(mbgl::style::PropertyValue<mbgl::style::TranslateAnchorType>(
+            static_cast<mbgl::style::TranslateAnchorType>(value)));
+    }
+
     // =========================================================================
     // ColorReliefLayer
     // =========================================================================
@@ -1373,5 +1636,37 @@ namespace DOTNET_NAMESPACE
     System::Void ColorReliefLayer::Opacity::set(float value)
     {
         Impl()->setColorReliefOpacity(mbgl::style::PropertyValue<float>(value));
+    }
+
+    System::String^ ColorReliefLayer::ColorRamp::get()
+    {
+        const auto& pv = Impl()->getColorReliefColor();
+        if (!pv.isUndefined())
+        {
+            mbgl::Value serialized = pv.getExpression().serialize();
+            return msclr::interop::marshal_as<System::String^>(ValueToJsonString(serialized));
+        }
+        return System::String::Empty;
+    }
+
+    System::Void ColorReliefLayer::ColorRamp::set(System::String^ value)
+    {
+        if (value == nullptr || value->Length == 0)
+            return;
+
+        std::string json = msclr::interop::marshal_as<std::string>(value);
+        mbgl::style::conversion::JSDocument doc;
+        doc.Parse(json.c_str());
+        if (doc.HasParseError())
+            throw gcnew System::ArgumentException("Invalid color ramp JSON: parse error");
+
+        mbgl::style::conversion::Error error;
+        auto colorRamp = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
+            mbgl::style::conversion::Convertible(&doc), error);
+        if (!colorRamp)
+            throw gcnew System::ArgumentException(
+                msclr::interop::marshal_as<System::String^>("Invalid color ramp expression: " + error.message));
+
+        Impl()->setColorReliefColor(*colorRamp);
     }
 }

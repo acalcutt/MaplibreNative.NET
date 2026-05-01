@@ -143,6 +143,12 @@ namespace DOTNET_NAMESPACE
         /// <summary>Join style at corners of lines.</summary>
         property LineJoinType Join { LineJoinType get(); System::Void set(LineJoinType); }
 
+        /// <summary>Limit at which a miter join is converted to a bevel join. Default: 2.</summary>
+        property float MiterLimit { float get(); System::Void set(float); }
+
+        /// <summary>Limit at which a round join is converted to a bevel join. Default: 1.05.</summary>
+        property float RoundLimit { float get(); System::Void set(float); }
+
         /// <summary>Sort key for feature rendering order within the layer.</summary>
         property float SortKey { float get(); System::Void set(float); }
 
@@ -445,6 +451,31 @@ namespace DOTNET_NAMESPACE
 
         /// <summary>Icon halo blur in pixels.</summary>
         property float IconHaloBlur { float get(); System::Void set(float); }
+
+        /// <summary>
+        /// Scales the icon to fit around the associated text.
+        /// None = icon not scaled, Both = icon scaled to fit text in both axes,
+        /// Width/Height = scaled in one axis only.
+        /// </summary>
+        property IconTextFitType IconTextFit { IconTextFitType get(); System::Void set(IconTextFitType); }
+
+        /// <summary>
+        /// Padding applied to each side of the icon bounding box when using IconTextFit
+        /// as [top, right, bottom, left] in ems. Returns {0,0,0,0} when unset.
+        /// </summary>
+        property cli::array<float>^ IconTextFitPadding { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>X/Y translation of icons in pixels as [x, y].</summary>
+        property cli::array<float>^ IconTranslate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for IconTranslate: Map or Viewport.</summary>
+        property TranslateAnchorType IconTranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
+
+        /// <summary>X/Y translation of text in pixels as [x, y].</summary>
+        property cli::array<float>^ TextTranslate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for TextTranslate: Map or Viewport.</summary>
+        property TranslateAnchorType TextTranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
     };
 
     // =========================================================================
@@ -509,6 +540,9 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Resampling method used when scaling raster tiles. Default: Linear.</summary>
+        property RasterResamplingType Resampling { RasterResamplingType get(); System::Void set(RasterResamplingType); }
     };
 
     // =========================================================================
@@ -538,6 +572,9 @@ namespace DOTNET_NAMESPACE
             float get();
             System::Void set(float);
         }
+
+        /// <summary>Sprite image name for a repeating background pattern. Empty string = solid color.</summary>
+        property System::String^ Pattern { System::String^ get(); System::Void set(System::String^); }
     };
 
     // =========================================================================
@@ -631,6 +668,17 @@ namespace DOTNET_NAMESPACE
             System::String^ get();
             System::Void set(System::String^);
         }
+
+        /// <summary>
+        /// Frame of reference for the illumination direction: Map keeps the
+        /// light direction fixed as the map rotates; Viewport keeps it fixed
+        /// relative to the viewport.
+        /// </summary>
+        property HillshadeIlluminationAnchorType IlluminationAnchor
+        {
+            HillshadeIlluminationAnchorType get();
+            System::Void set(HillshadeIlluminationAnchorType);
+        }
     };
 
     // =========================================================================
@@ -681,6 +729,15 @@ namespace DOTNET_NAMESPACE
             bool get();
             System::Void set(bool);
         }
+
+        /// <summary>Sprite image name for a repeating fill-extrusion pattern. Empty string = solid color.</summary>
+        property System::String^ Pattern { System::String^ get(); System::Void set(System::String^); }
+
+        /// <summary>X/Y translation of the fill extrusion in pixels as [x, y].</summary>
+        property cli::array<float>^ Translate { cli::array<float>^ get(); System::Void set(cli::array<float>^); }
+
+        /// <summary>Frame of reference for Translate: Map or Viewport.</summary>
+        property TranslateAnchorType TranslateAnchor { TranslateAnchorType get(); System::Void set(TranslateAnchorType); }
     };
 
     // =========================================================================
@@ -702,6 +759,19 @@ namespace DOTNET_NAMESPACE
         {
             float get();
             System::Void set(float);
+        }
+
+        /// <summary>
+        /// Color ramp as a MapLibre expression JSON string that maps elevation
+        /// (raster-value) to a color. Example:
+        /// <c>["interpolate",["linear"],["raster-value"],0,"#000080",3000,"#ffffff"]</c>
+        /// Returns an empty string when unset.
+        /// Throws ArgumentException on invalid expression JSON.
+        /// </summary>
+        property System::String^ ColorRamp
+        {
+            System::String^ get();
+            System::Void set(System::String^);
         }
     };
 }
