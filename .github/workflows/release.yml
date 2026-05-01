@@ -204,7 +204,7 @@ jobs:
           tag:        v${{ needs.release-check.outputs.version }}
           name:       v${{ needs.release-check.outputs.version }}
           bodyFile:   changelog_for_version.md
-          artifacts:  ./artifacts/MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-x64.zip
+          artifacts:  ./artifacts/MaplibreNative.NET-v${{ needs.release-check.outputs.version }}-win-*.zip
           prerelease: ${{ steps.flags.outputs.prerelease }}
           allowUpdates: true
           draft: false
