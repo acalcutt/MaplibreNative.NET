@@ -9,11 +9,13 @@
          its output directory alongside this assembly. -->
   </PropertyGroup>
 
-  <!-- Resolve MaplibreNative.NET.dll: local build output takes priority,
-       falling back to a pre-built copy placed alongside VistumblerCS. -->
+  <!-- Reference the DLL from the local cmake build output.
+       When consuming this project from another repo, either:
+         (a) build MaplibreNative.NET-ac first so build\Release\MaplibreNative.NET.dll exists, or
+         (b) override _MaplibreNativeDll in a Directory.Build.props in your repo. -->
   <PropertyGroup>
     <_MaplibreNativeDll Condition="Exists('..\build\Release\MaplibreNative.NET.dll')">..\build\Release\MaplibreNative.NET.dll</_MaplibreNativeDll>
-    <_MaplibreNativeDll Condition="'$(_MaplibreNativeDll)' == ''">..\..\VistumblerCS\lib\x64\MaplibreNative.NET.dll</_MaplibreNativeDll>
+    <_MaplibreNativeDll Condition="'$(_MaplibreNativeDll)' == ''">$(MSBuildThisFileDirectory)..\build\Release\MaplibreNative.NET.dll</_MaplibreNativeDll>
   </PropertyGroup>
 
   <ItemGroup>
