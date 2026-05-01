@@ -2,13 +2,13 @@
 
 # MaplibreNative.NET
 
-This is a .NET wrapper to the [maplibre-native](https://github.com/maplibre/maplibre-native). It is meant to be used in Windows and works with .NET Framework and .NET Core.
+This is a .NET wrapper to the [maplibre-native](https://github.com/maplibre/maplibre-native). It is meant to be used on Windows and requires **.NET 8.0 or newer** (uses C++/CLI `/clr:netcore`).
 
 ## Using in your project
 
 Just add a reference to the `MaplibreNative.NET.dll` (see below how to build from sources), and you can immediately use the classes in the `MaplibreNative` namespace.
 
-This is a minimal example using the `HeadlessFrontend` renderer, in a project with .NET 7.0 (Windows) and WPF enabled:
+This is a minimal example using the `HeadlessFrontend` renderer, in a project with .NET 8.0+ (Windows) and WPF enabled:
 
 ```cs
 using MaplibreNative;
@@ -68,75 +68,105 @@ using (var map = new Map(frontend, new MapObserver(), new MapOptions().WithSize(
 ```
 You can check other examples at the [Examples](https://github.com/tdcosta100/MaplibreNative.NET/tree/main/Examples) directory.
 
-**Attention:** the examples have a reference to `MaplibreNative.NET.dll` located at `build\Release` subdirectory. So you have to build MaplibreNative.NET with `Release` configuration before building the examples.
+**Attention:** the examples reference `MaplibreNative.NET.dll` at `build\Release`. Build MaplibreNative.NET with `Release` configuration before building the examples (see *Building the sources* below).
 
 ## Building the sources
 
 ### Prerequisites
 
-As this is a .NET build, `Microsoft Visual Studio` is required. This project was developed using a `Microsoft Visual Studio 2022` environment, but it should work with `Microsoft Visual Studio 2019` as well.
-
-To install the required Visual Studio components, open Visual Studio Installer and check `Desktop Development with C++` option. Make sure `C++ CMake tools for Windows` is selected in the right pane. If `git` is not already installed, select `Git for Windows` option in `Individual Components`. When Visual Studio finishes the install process, everything is ready to start.
+- **Visual Studio 2022** with the **Desktop Development with C++** workload.
+  In Visual Studio Installer, confirm that these individual components are selected:
+  - `C++ CMake tools for Windows`
+  - `Git for Windows` (if git is not already installed)
+- **.NET 8 SDK** (or newer) — required for the C++/CLI `/clr:netcore` compilation.
+- **PowerShell** (included with Windows).
 
 ### Downloading sources
 
-Open `x64 Native Tools Command Prompt for VS 2022` and then clone the repository:
+```powershell
+git clone -j8 https://github.com/andrewpavlov/MaplibreNative.NET-ac.git
+cd MaplibreNative.NET-ac
+git submodule update --init dependencies/maplibre-native
+```
 
-```cmd
-git clone --recurse-submodules -j8 https://github.com/tdcosta100/MaplibreNative.NET.git
-cd MaplibreNative.NET
+Then initialize the nested vendor submodules. One submodule (`vendor/vector-tile`) may need its remote corrected manually before the full recursive init succeeds:
+
+```powershell
+# Fix the vector-tile remote (only needed once)
+Set-Location dependencies/maplibre-native/vendor/vector-tile
+git remote set-url origin https://github.com/maplibre/mvt-cpp.git
+git fetch origin
+git checkout 8ad3bf0b78bf9cb0dba0abaccec0c180e1c27ab3
+Set-Location ../../../..
+
+# Initialize all remaining nested submodules
+git submodule update --init --recursive dependencies/maplibre-native
+```
+
+### Installing vendor packages (vcpkg)
+
+This step downloads and builds all native dependencies via vcpkg. It only needs to be done once (results are cached).
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+
+# Bootstrap vcpkg (only needed once)
+.\dependencies\maplibre-native\platform\windows\vendor\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+
+# Install packages (~20–40 min on first run)
+.\dependencies\maplibre-native\platform\windows\Get-VendorPackages.ps1 -Triplet x64-windows -Renderer OpenGL -With-ICU
 ```
 
 ### Configuring
 
-Configure the build with the following command:
+The CMake toolchain reads `VSCMD_ARG_TGT_ARCH` to select the vcpkg triplet. Either run the following from a **Developer PowerShell for VS 2022** (which sets this automatically), or set it manually:
 
-```cmd
-cmake . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+```powershell
+$cmake = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+
+$env:VSCMD_ARG_TGT_ARCH = "x64"
+$env:VCPKG_BINARY_SOURCES = "clear;files,$PWD\dependencies\maplibre-native\platform\windows\vendor\vcpkg\archives,readwrite"
+
+& $cmake -B build -G "Visual Studio 17 2022" -A x64 `
+  -DMLN_WITH_OPENGL=ON `
+  -DMLN_WITH_EGL=OFF `
+  -DMLN_WITH_VULKAN=OFF `
+  "-DCMAKE_CXX_FLAGS=/wd4267"
 ```
 
-It will take some time to build and install all components on which the project depends.
+To target a specific .NET version (default is `net8.0`):
 
-### Alternative configure commands
-
-To configure build with EGL support (ANGLE libraries will be build), use the following command:
-
-```cmd
-cmake . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DMLN_WITH_EGL=ON
+```powershell
+& $cmake -B build -G "Visual Studio 17 2022" -A x64 `
+  -DMLN_WITH_OPENGL=ON -DMLN_WITH_EGL=OFF -DMLN_WITH_VULKAN=OFF `
+  "-DCMAKE_CXX_FLAGS=/wd4267" `
+  "-DMAPLIBRE_NET_DOTNET_VERSION=net9.0"
 ```
-
-To configure build with OSMesa (software rendering), use the following command:
-
-```
-cmake . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DMLN_WITH_OSMESA=ON
-```
-
-**WARNING:** as OSMesa doesn't have static libraries, it's necessary to copy `libglapi.dll`, `libGLESv2.dll` and `osmesa.dll` from `dependencies\maplibre-native\platform\windows\vendor\mesa3d\<arch>` to executable/dll directory you want to use, otherwise it won't run.
 
 ### Building
 
-Finally, build the project with the following command:
+Build only the managed wrapper (fastest):
 
-```cmd
-cmake --build build
+```powershell
+& $cmake --build build --target mbgl-dotnet --config Release --parallel
 ```
 
-### Building with Microsoft Visual Studio
+Or open `build\MaplibreNative.NET.sln` in Visual Studio, set configuration to `Release`, and build the `mbgl-dotnet` target.
 
-Just omit the `-G Ninja` option from the configure command:
+The output DLL will be at `build\Release\MaplibreNative.NET.dll`.
 
-```cmd
-cmake . -B build
+### Alternative renderers
+
+To configure with EGL support (ANGLE):
+
+```powershell
+& $cmake -B build -G "Visual Studio 17 2022" -A x64 -DMLN_WITH_EGL=ON "-DCMAKE_CXX_FLAGS=/wd4267"
 ```
 
-The same can be done with alternative configure commands:
+To configure with OSMesa (software rendering):
 
-```cmd
-cmake . -B build -DMLN_WITH_EGL=ON
-```
-or
-```cmd
-cmake . -B build -DMLN_WITH_OSMESA=ON
+```powershell
+& $cmake -B build -G "Visual Studio 17 2022" -A x64 -DMLN_WITH_OSMESA=ON "-DCMAKE_CXX_FLAGS=/wd4267"
 ```
 
-Once configure is done, open the file `build\MaplibreNative.NET.sln`. Build the target `ALL_BUILD` to build all targets, or pick a specific target. Don't forget to pick a build configuration (`Release`, `RelWithDebInfo`, `MinSizeRel` or `Debug`), otherwise the project will be built with default configuration (`Debug`).
+**Note for OSMesa:** copy `libglapi.dll`, `libGLESv2.dll`, and `osmesa.dll` from `dependencies\maplibre-native\platform\windows\vendor\mesa3d\<arch>` next to your application's executable.
