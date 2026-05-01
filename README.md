@@ -84,11 +84,11 @@ You can check other examples at the [Examples](https://github.com/tdcosta100/Map
 ### Downloading sources
 
 ```powershell
-git clone -j8 https://github.com/tdcosta100/MaplibreNative.NET.git
-cd MaplibreNative.NET-ac
-
-git submodule update --init --recursive dependencies/maplibre-native
+git clone --config core.longpaths=true --recurse-submodules -j8 https://github.com/tdcosta100/MaplibreNative.NET.git
+cd MaplibreNative.NET
 ```
+
+> **Note:** `--depth 1` is intentionally omitted. The `maplibre-native` submodule is pinned to a specific commit that may not be at a branch tip, which can cause shallow clones to fail.
 
 ### Installing vendor packages (vcpkg)
 
