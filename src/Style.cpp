@@ -3,8 +3,15 @@
 #include "Style.h"
 #include "Layers.h"
 #include "Sources.h"
+#include "Light.h"
+#include "PremultipliedImage.h"
+#include "CameraOptions.h"
 #include <mbgl/actor/scheduler.hpp>
 #include <mbgl/style/style.hpp>
+#include <mbgl/style/light.hpp>
+#include <mbgl/style/image.hpp>
+#include <mbgl/style/transition_options.hpp>
+#include <mbgl/map/camera.hpp>
 #include <mbgl/style/sources/geojson_source.hpp>
 #include <mbgl/style/sources/vector_source.hpp>
 #include <mbgl/style/sources/raster_source.hpp>
@@ -383,5 +390,104 @@ namespace DOTNET_NAMESPACE
         auto* raw = src.get();
         NativePointer->addSource(std::move(src));
         return gcnew ImageSource(raw);
+    }
+
+    // -------------------------------------------------------------------------
+    // Light
+    // -------------------------------------------------------------------------
+
+    Light^ Style::GetLight()
+    {
+        return gcnew Light(NativePointer->getLight());
+    }
+
+    // -------------------------------------------------------------------------
+    // Transition options
+    // -------------------------------------------------------------------------
+
+    TransitionOptions^ Style::GetTransitionOptions()
+    {
+        auto native = NativePointer->getTransitionOptions();
+        auto opts = gcnew TransitionOptions();
+        if (native.duration) {
+            opts->DurationMilliseconds = System::Nullable<System::Int64>(
+                (System::Int64)std::chrono::duration_cast<std::chrono::milliseconds>(*native.duration).count());
+        }
+        if (native.delay) {
+            opts->DelayMilliseconds = System::Nullable<System::Int64>(
+                (System::Int64)std::chrono::duration_cast<std::chrono::milliseconds>(*native.delay).count());
+        }
+        opts->EnablePlacementTransitions = native.enablePlacementTransitions;
+        return opts;
+    }
+
+    System::Void Style::SetTransitionOptions(TransitionOptions^ options)
+    {
+        mbgl::style::TransitionOptions native;
+        if (options->DurationMilliseconds.HasValue) {
+            native.duration = std::chrono::milliseconds(options->DurationMilliseconds.Value);
+        }
+        if (options->DelayMilliseconds.HasValue) {
+            native.delay = std::chrono::milliseconds(options->DelayMilliseconds.Value);
+        }
+        native.enablePlacementTransitions = options->EnablePlacementTransitions;
+        NativePointer->setTransitionOptions(native);
+    }
+
+    // -------------------------------------------------------------------------
+    // Default camera
+    // -------------------------------------------------------------------------
+
+    CameraOptions^ Style::GetDefaultCamera()
+    {
+        auto cam = NativePointer->getDefaultCamera();
+        return gcnew CameraOptions(gcnew NativePointerHolder<mbgl::CameraOptions>(cam));
+    }
+
+    // -------------------------------------------------------------------------
+    // Sprite / icon images
+    // -------------------------------------------------------------------------
+
+    System::Void Style::AddImage(System::String^ id, PremultipliedImage^ pixels,
+                                  System::Single pixelRatio, System::Boolean sdf)
+    {
+        // Clone the pixel data (style::Image takes ownership via move)
+        auto pixelsClone = pixels->NativePointer->clone();
+        auto img = std::make_unique<mbgl::style::Image>(
+            Convert::ToStdString(id),
+            std::move(pixelsClone),
+            pixelRatio,
+            (bool)sdf);
+        NativePointer->addImage(std::move(img));
+    }
+
+    System::Void Style::AddImage(System::String^ id, PremultipliedImage^ pixels,
+                                  System::Single pixelRatio)
+    {
+        AddImage(id, pixels, pixelRatio, false);
+    }
+
+    StyleImage^ Style::GetImage(System::String^ id)
+    {
+        auto opt = NativePointer->getImage(Convert::ToStdString(id));
+        if (!opt) return nullptr;
+        const auto& img = *opt;
+        const auto& px = img.getImage();
+        return gcnew StyleImage(
+            gcnew System::String(img.getID().c_str()),
+            (System::UInt32)px.size.width,
+            (System::UInt32)px.size.height,
+            img.getPixelRatio(),
+            img.isSdf());
+    }
+
+    System::Boolean Style::HasImage(System::String^ id)
+    {
+        return NativePointer->getImage(Convert::ToStdString(id)).has_value();
+    }
+
+    System::Void Style::RemoveImage(System::String^ id)
+    {
+        NativePointer->removeImage(Convert::ToStdString(id));
     }
 }

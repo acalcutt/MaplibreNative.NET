@@ -95,6 +95,7 @@ target_sources(
 	${PROJECT_SOURCE_DIR}/src/Style.cpp
 	${PROJECT_SOURCE_DIR}/src/Layer.cpp
 	${PROJECT_SOURCE_DIR}/src/Layers.cpp
+	${PROJECT_SOURCE_DIR}/src/Light.cpp
 	${PROJECT_SOURCE_DIR}/src/Source.cpp
 	${PROJECT_SOURCE_DIR}/src/Sources.cpp
 	${PROJECT_SOURCE_DIR}/src/TileCoordinate.cpp

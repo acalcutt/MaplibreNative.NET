@@ -5,6 +5,9 @@
 #include "Source.h"
 #include "Sources.h"
 #include "LatLng.h"
+#include "Light.h"
+#include "StyleImage.h"
+#include "TransitionOptions.h"
 
 namespace mbgl
 {
@@ -18,7 +21,7 @@ namespace DOTNET_NAMESPACE
 {
     ref class CameraOptions;
     ref class FileSource;
-    ref class TransitionOptions;
+    ref class PremultipliedImage;
 
     public ref class Style : NativeWrapper<mbgl::style::Style>
     {
@@ -95,8 +98,66 @@ namespace DOTNET_NAMESPACE
         /// <summary>Returns true if a source with the given id exists.</summary>
         System::Boolean HasSource(System::String^ sourceId);
 
-        // -------------------------------------------------------------------------
-        // Legacy helpers (kept for backward compatibility)
+        // -------------------------------------------------------------------------        // Light
+        // --------------------------------------------------------------------
+
+        /// <summary>
+        /// Returns a non-owning wrapper around the style's current light.
+        /// Mutating the returned object immediately affects the rendered map.
+        /// </summary>
+        Light^ GetLight();
+
+        // --------------------------------------------------------------------
+        // Transition options
+        // --------------------------------------------------------------------
+
+        /// <summary>Gets the current global transition options.</summary>
+        TransitionOptions^ GetTransitionOptions();
+
+        /// <summary>Sets the global transition options.</summary>
+        System::Void SetTransitionOptions(TransitionOptions^ options);
+
+        // --------------------------------------------------------------------
+        // Default camera
+        // --------------------------------------------------------------------
+
+        /// <summary>
+        /// Returns the default camera position defined in the style JSON
+        /// (the "center", "zoom", "bearing" and "pitch" root fields).
+        /// Fields not set in the style will be unset (null) on the returned options.
+        /// </summary>
+        CameraOptions^ GetDefaultCamera();
+
+        // --------------------------------------------------------------------
+        // Sprite / icon images
+        // --------------------------------------------------------------------
+
+        /// <summary>
+        /// Add a sprite image to the style.
+        /// </summary>
+        /// <param name="id">Unique sprite id.</param>
+        /// <param name="pixels">Premultiplied RGBA pixel data.</param>
+        /// <param name="pixelRatio">Device pixel ratio the image was created at (usually 1 or 2).</param>
+        /// <param name="sdf">True if the image should be treated as a signed distance field.</param>
+        System::Void AddImage(System::String^ id, PremultipliedImage^ pixels,
+                              System::Single pixelRatio, System::Boolean sdf);
+
+        /// <summary>Add a standard (non-SDF) sprite image.</summary>
+        System::Void AddImage(System::String^ id, PremultipliedImage^ pixels,
+                              System::Single pixelRatio);
+
+        /// <summary>
+        /// Returns metadata for the image with the given id, or nullptr if not found.
+        /// </summary>
+        StyleImage^ GetImage(System::String^ id);
+
+        /// <summary>Returns true if an image with the given id exists in the style.</summary>
+        System::Boolean HasImage(System::String^ id);
+
+        /// <summary>Removes the image with the given id from the style.</summary>
+        System::Void RemoveImage(System::String^ id);
+
+        // --------------------------------------------------------------------        // Legacy helpers (kept for backward compatibility)
         // -------------------------------------------------------------------------
 
         /// <summary>Add a GeoJSON source that fetches its data from a URL.</summary>
