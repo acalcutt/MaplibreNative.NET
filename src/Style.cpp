@@ -27,6 +27,7 @@
 #include <mbgl/style/layers/hillshade_layer.hpp>
 #include <mbgl/style/layers/fill_extrusion_layer.hpp>
 #include <mbgl/style/layers/color_relief_layer.hpp>
+#include <mbgl/style/layers/location_indicator_layer.hpp>
 #include <mbgl/style/conversion/geojson.hpp>
 #include <mbgl/util/color.hpp>
 #include <mbgl/util/geo.hpp>
@@ -170,6 +171,7 @@ namespace DOTNET_NAMESPACE
         if (auto* p = raw->as<mbgl::style::HillshadeLayer>())     return gcnew HillshadeLayer(p);
         if (auto* p = raw->as<mbgl::style::FillExtrusionLayer>()) return gcnew FillExtrusionLayer(p);
         if (auto* p = raw->as<mbgl::style::ColorReliefLayer>())   return gcnew ColorReliefLayer(p);
+        if (auto* p = raw->as<mbgl::style::LocationIndicatorLayer>()) return gcnew LocationIndicatorLayer(p);
         // Unknown type — return base Layer wrapper
         return gcnew Layer(raw);
     }
@@ -321,9 +323,13 @@ namespace DOTNET_NAMESPACE
         return gcnew ColorReliefLayer(raw);
     }
 
-    // -------------------------------------------------------------------------
-    // AddXxxLayer overloads with beforeLayerId
-    // -------------------------------------------------------------------------
+    LocationIndicatorLayer^ Style::AddLocationIndicatorLayer(System::String^ layerId)
+    {
+        auto layer = std::make_unique<mbgl::style::LocationIndicatorLayer>(Convert::ToStdString(layerId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer));
+        return gcnew LocationIndicatorLayer(raw);
+    }
 
     FillLayer^ Style::AddFillLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId)
     {
@@ -414,6 +420,14 @@ namespace DOTNET_NAMESPACE
         return gcnew ColorReliefLayer(raw);
     }
 
+    LocationIndicatorLayer^ Style::AddLocationIndicatorLayer(System::String^ layerId, System::String^ beforeLayerId)
+    {
+        auto layer = std::make_unique<mbgl::style::LocationIndicatorLayer>(Convert::ToStdString(layerId));
+        auto* raw = layer.get();
+        NativePointer->addLayer(std::move(layer), std::optional<std::string>(Convert::ToStdString(beforeLayerId)));
+        return gcnew LocationIndicatorLayer(raw);
+    }
+
     // -------------------------------------------------------------------------
     // Add source helpers
     // -------------------------------------------------------------------------
@@ -426,9 +440,47 @@ namespace DOTNET_NAMESPACE
         return gcnew GeoJSONSource(raw);
     }
 
+    static mbgl::style::GeoJSONOptions BuildGeoJSONOptions(GeoJSONOptions^ opts)
+    {
+        mbgl::style::GeoJSONOptions o;
+        o.minzoom        = opts->MinZoom;
+        o.maxzoom        = opts->MaxZoom;
+        o.tileSize       = opts->TileSize;
+        o.buffer         = opts->Buffer;
+        o.tolerance      = opts->Tolerance;
+        o.lineMetrics    = opts->LineMetrics;
+        o.cluster        = opts->Cluster;
+        o.clusterRadius  = opts->ClusterRadius;
+        o.clusterMaxZoom = opts->ClusterMaxZoom;
+        return o;
+    }
+
+    GeoJSONSource^ Style::AddGeoJsonSource(System::String^ sourceId, GeoJSONOptions^ options)
+    {
+        auto nativeOpts = mbgl::Immutable<mbgl::style::GeoJSONOptions>(
+            mbgl::makeMutable<mbgl::style::GeoJSONOptions>(BuildGeoJSONOptions(options)));
+        auto src = std::make_unique<mbgl::style::GeoJSONSource>(
+            Convert::ToStdString(sourceId), nativeOpts);
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew GeoJSONSource(raw);
+    }
+
     GeoJSONSource^ Style::AddGeoJsonSourceFromUrl(System::String^ sourceId, System::String^ url)
     {
         auto src = std::make_unique<mbgl::style::GeoJSONSource>(Convert::ToStdString(sourceId));
+        src->setURL(Convert::ToStdString(url));
+        auto* raw = src.get();
+        NativePointer->addSource(std::move(src));
+        return gcnew GeoJSONSource(raw);
+    }
+
+    GeoJSONSource^ Style::AddGeoJsonSourceFromUrl(System::String^ sourceId, System::String^ url, GeoJSONOptions^ options)
+    {
+        auto nativeOpts = mbgl::Immutable<mbgl::style::GeoJSONOptions>(
+            mbgl::makeMutable<mbgl::style::GeoJSONOptions>(BuildGeoJSONOptions(options)));
+        auto src = std::make_unique<mbgl::style::GeoJSONSource>(
+            Convert::ToStdString(sourceId), nativeOpts);
         src->setURL(Convert::ToStdString(url));
         auto* raw = src.get();
         NativePointer->addSource(std::move(src));

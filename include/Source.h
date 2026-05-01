@@ -40,5 +40,25 @@ namespace DOTNET_NAMESPACE
             bool get();
             System::Void set(bool);
         }
+
+        /// <summary>
+        /// Number of zoom levels to prefetch when requesting tiles.
+        /// Pass a negative value to clear the override and use the global setting.
+        /// </summary>
+        property System::Int32 PrefetchZoomDelta
+        {
+            System::Int32 get();
+            System::Void set(System::Int32);
+        }
+
+        /// <summary>
+        /// Maximum overscale factor for parent tiles used when a tile is not yet
+        /// available. Pass a negative value to clear the override.
+        /// </summary>
+        property System::Int32 MaxOverscaleFactorForParentTiles
+        {
+            System::Int32 get();
+            System::Void set(System::Int32);
+        }
     };
 }

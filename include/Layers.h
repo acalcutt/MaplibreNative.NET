@@ -15,6 +15,7 @@ class HeatmapLayer;
 class HillshadeLayer;
 class FillExtrusionLayer;
 class ColorReliefLayer;
+class LocationIndicatorLayer;
 } // namespace style
 } // namespace mbgl
 
@@ -772,6 +773,122 @@ namespace DOTNET_NAMESPACE
         {
             System::String^ get();
             System::Void set(System::String^);
+        }
+    };
+
+    // =========================================================================
+    // LocationIndicatorLayer
+    // =========================================================================
+
+    /// <summary>
+    /// Wraps an mbgl::style::LocationIndicatorLayer (the "blue dot" user-location
+    /// indicator layer). No source is required.
+    /// </summary>
+    public ref class LocationIndicatorLayer : public Layer
+    {
+    internal:
+        LocationIndicatorLayer(mbgl::style::LocationIndicatorLayer* layer);
+
+    private:
+        mbgl::style::LocationIndicatorLayer* Impl();
+
+    public:
+        // ---- Layout properties ------------------------------------------
+
+        /// <summary>Name of the image to use as the bearing arrow (sprite id).</summary>
+        property System::String^ BearingImage
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+
+        /// <summary>Name of the image to use as the shadow beneath the indicator (sprite id).</summary>
+        property System::String^ ShadowImage
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+
+        /// <summary>Name of the image to use as the top of the location indicator (sprite id).</summary>
+        property System::String^ TopImage
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+
+        // ---- Paint properties -------------------------------------------
+
+        /// <summary>Radius of the accuracy circle in metres.</summary>
+        property float AccuracyRadius
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>Border color of the accuracy circle.</summary>
+        property System::String^ AccuracyRadiusBorderColor
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+
+        /// <summary>Fill color of the accuracy circle.</summary>
+        property System::String^ AccuracyRadiusColor
+        {
+            System::String^ get();
+            System::Void set(System::String^);
+        }
+
+        /// <summary>Bearing of the location indicator in degrees (0 = north, clockwise).</summary>
+        property float Bearing
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>Scale factor of the BearingImage (default 1.0).</summary>
+        property float BearingImageSize
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>Displacement of the top image along the tilt in pixels (default 0).</summary>
+        property float ImageTiltDisplacement
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>
+        /// Geographic position of the indicator as [latitude, longitude, altitude].
+        /// Returns an array of three doubles.
+        /// </summary>
+        property cli::array<double>^ Location
+        {
+            cli::array<double>^ get();
+            System::Void set(cli::array<double>^);
+        }
+
+        /// <summary>Perspective compensation factor (0 = no compensation, 1 = full; default 0.85).</summary>
+        property float PerspectiveCompensation
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>Scale factor of the ShadowImage (default 1.0).</summary>
+        property float ShadowImageSize
+        {
+            float get();
+            System::Void set(float);
+        }
+
+        /// <summary>Scale factor of the TopImage (default 1.0).</summary>
+        property float TopImageSize
+        {
+            float get();
+            System::Void set(float);
         }
     };
 }

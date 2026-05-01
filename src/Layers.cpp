@@ -11,6 +11,8 @@
 #include <mbgl/style/layers/hillshade_layer.hpp>
 #include <mbgl/style/layers/fill_extrusion_layer.hpp>
 #include <mbgl/style/layers/color_relief_layer.hpp>
+#include <mbgl/style/layers/location_indicator_layer.hpp>
+#include <mbgl/style/rotation.hpp>
 #include <mbgl/style/conversion/color_ramp_property_value.hpp>
 #include <mbgl/style/rapidjson_conversion.hpp>
 #include <mbgl/util/color.hpp>
@@ -1668,5 +1670,164 @@ namespace DOTNET_NAMESPACE
                 msclr::interop::marshal_as<System::String^>("Invalid color ramp expression: " + error.message));
 
         Impl()->setColorReliefColor(*colorRamp);
+    }
+
+    // =========================================================================
+    // LocationIndicatorLayer
+    // =========================================================================
+
+    LocationIndicatorLayer::LocationIndicatorLayer(mbgl::style::LocationIndicatorLayer* layer) : Layer(layer) {}
+
+    mbgl::style::LocationIndicatorLayer* LocationIndicatorLayer::Impl()
+    {
+        return static_cast<mbgl::style::LocationIndicatorLayer*>(_layer);
+    }
+
+    // ---- Layout: image sprite names ----------------------------------------
+
+    System::String^ LocationIndicatorLayer::BearingImage::get()
+    {
+        const auto& pv = Impl()->getBearingImage();
+        if (pv.isConstant()) return msclr::interop::marshal_as<System::String^>(pv.asConstant().id());
+        return System::String::Empty;
+    }
+    System::Void LocationIndicatorLayer::BearingImage::set(System::String^ value)
+    {
+        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        Impl()->setBearingImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    System::String^ LocationIndicatorLayer::ShadowImage::get()
+    {
+        const auto& pv = Impl()->getShadowImage();
+        if (pv.isConstant()) return msclr::interop::marshal_as<System::String^>(pv.asConstant().id());
+        return System::String::Empty;
+    }
+    System::Void LocationIndicatorLayer::ShadowImage::set(System::String^ value)
+    {
+        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        Impl()->setShadowImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    System::String^ LocationIndicatorLayer::TopImage::get()
+    {
+        const auto& pv = Impl()->getTopImage();
+        if (pv.isConstant()) return msclr::interop::marshal_as<System::String^>(pv.asConstant().id());
+        return System::String::Empty;
+    }
+    System::Void LocationIndicatorLayer::TopImage::set(System::String^ value)
+    {
+        std::string raw = msclr::interop::marshal_as<std::string>(value ? value : System::String::Empty);
+        Impl()->setTopImage(mbgl::style::PropertyValue<mbgl::style::expression::Image>(
+            mbgl::style::expression::Image(raw)));
+    }
+
+    // ---- Paint: floats -----------------------------------------------------
+
+    float LocationIndicatorLayer::AccuracyRadius::get()
+    {
+        return GetFloat(Impl()->getAccuracyRadius(), 0.0f);
+    }
+    System::Void LocationIndicatorLayer::AccuracyRadius::set(float value)
+    {
+        Impl()->setAccuracyRadius(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LocationIndicatorLayer::Bearing::get()
+    {
+        const auto& pv = Impl()->getBearing();
+        if (pv.isConstant()) return (float)pv.asConstant().getAngle();
+        return 0.0f;
+    }
+    System::Void LocationIndicatorLayer::Bearing::set(float value)
+    {
+        Impl()->setBearing(mbgl::style::PropertyValue<mbgl::style::Rotation>(
+            mbgl::style::Rotation((double)value)));
+    }
+
+    float LocationIndicatorLayer::BearingImageSize::get()
+    {
+        return GetFloat(Impl()->getBearingImageSize(), 1.0f);
+    }
+    System::Void LocationIndicatorLayer::BearingImageSize::set(float value)
+    {
+        Impl()->setBearingImageSize(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LocationIndicatorLayer::ImageTiltDisplacement::get()
+    {
+        return GetFloat(Impl()->getImageTiltDisplacement(), 0.0f);
+    }
+    System::Void LocationIndicatorLayer::ImageTiltDisplacement::set(float value)
+    {
+        Impl()->setImageTiltDisplacement(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LocationIndicatorLayer::PerspectiveCompensation::get()
+    {
+        return GetFloat(Impl()->getPerspectiveCompensation(), 0.85f);
+    }
+    System::Void LocationIndicatorLayer::PerspectiveCompensation::set(float value)
+    {
+        Impl()->setPerspectiveCompensation(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LocationIndicatorLayer::ShadowImageSize::get()
+    {
+        return GetFloat(Impl()->getShadowImageSize(), 1.0f);
+    }
+    System::Void LocationIndicatorLayer::ShadowImageSize::set(float value)
+    {
+        Impl()->setShadowImageSize(mbgl::style::PropertyValue<float>(value));
+    }
+
+    float LocationIndicatorLayer::TopImageSize::get()
+    {
+        return GetFloat(Impl()->getTopImageSize(), 1.0f);
+    }
+    System::Void LocationIndicatorLayer::TopImageSize::set(float value)
+    {
+        Impl()->setTopImageSize(mbgl::style::PropertyValue<float>(value));
+    }
+
+    // ---- Paint: colors -----------------------------------------------------
+
+    System::String^ LocationIndicatorLayer::AccuracyRadiusBorderColor::get()
+    {
+        return ColorToString(GetColor(Impl()->getAccuracyRadiusBorderColor(), mbgl::Color(0, 0, 0, 0)));
+    }
+    System::Void LocationIndicatorLayer::AccuracyRadiusBorderColor::set(System::String^ value)
+    {
+        Impl()->setAccuracyRadiusBorderColor(mbgl::style::PropertyValue<mbgl::Color>(ParseColor(value)));
+    }
+
+    System::String^ LocationIndicatorLayer::AccuracyRadiusColor::get()
+    {
+        return ColorToString(GetColor(Impl()->getAccuracyRadiusColor(), mbgl::Color(0, 0, 0, 0)));
+    }
+    System::Void LocationIndicatorLayer::AccuracyRadiusColor::set(System::String^ value)
+    {
+        Impl()->setAccuracyRadiusColor(mbgl::style::PropertyValue<mbgl::Color>(ParseColor(value)));
+    }
+
+    // ---- Paint: location (lat/lng/alt) -------------------------------------
+
+    cli::array<double>^ LocationIndicatorLayer::Location::get()
+    {
+        const auto& pv = Impl()->getLocation();
+        if (pv.isConstant())
+        {
+            const auto& arr = pv.asConstant();
+            return gcnew cli::array<double> { arr[0], arr[1], arr[2] };
+        }
+        return gcnew cli::array<double> { 0.0, 0.0, 0.0 };
+    }
+    System::Void LocationIndicatorLayer::Location::set(cli::array<double>^ value)
+    {
+        if (value == nullptr || value->Length < 3) return;
+        std::array<double, 3> arr{ value[0], value[1], value[2] };
+        Impl()->setLocation(mbgl::style::PropertyValue<std::array<double, 3>>(arr));
     }
 }

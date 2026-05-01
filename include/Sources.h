@@ -2,6 +2,51 @@
 #include "Source.h"
 #include "LatLng.h"
 
+namespace DOTNET_NAMESPACE
+{
+    /// <summary>
+    /// Options that control tiling and clustering behaviour of a GeoJSONSource.
+    /// All options must be specified at construction time via
+    /// Style::AddGeoJsonSource(sourceId, options).
+    /// </summary>
+    public ref class GeoJSONOptions
+    {
+    public:
+        /// <summary>Minimum zoom at which tiles are generated (default 0).</summary>
+        property System::Byte MinZoom;
+        /// <summary>Maximum zoom at which tiles are generated (default 18).</summary>
+        property System::Byte MaxZoom;
+        /// <summary>Tile size in pixels (default 512).</summary>
+        property System::UInt16 TileSize;
+        /// <summary>Tile buffer size in pixels (default 128).</summary>
+        property System::UInt16 Buffer;
+        /// <summary>Douglas-Peucker simplification tolerance (default 0.375).</summary>
+        property System::Double Tolerance;
+        /// <summary>Whether to calculate line distance metrics (default false).</summary>
+        property System::Boolean LineMetrics;
+
+        /// <summary>Whether to cluster point features (default false).</summary>
+        property System::Boolean Cluster;
+        /// <summary>Cluster radius in pixels (default 50).</summary>
+        property System::UInt16 ClusterRadius;
+        /// <summary>Maximum zoom at which clusters are generated (default 17).</summary>
+        property System::Byte ClusterMaxZoom;
+
+        GeoJSONOptions()
+        {
+            MinZoom       = 0;
+            MaxZoom       = 18;
+            TileSize      = 512;
+            Buffer        = 128;
+            Tolerance     = 0.375;
+            LineMetrics   = false;
+            Cluster       = false;
+            ClusterRadius = 50;
+            ClusterMaxZoom = 17;
+        }
+    };
+}
+
 // Forward-declare native source types
 namespace mbgl {
 namespace style {

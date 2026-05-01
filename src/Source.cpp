@@ -45,4 +45,32 @@ namespace DOTNET_NAMESPACE
     {
         _source->setVolatile(value);
     }
+
+    System::Int32 Source::PrefetchZoomDelta::get()
+    {
+        auto val = _source->getPrefetchZoomDelta();
+        return val.has_value() ? (System::Int32)*val : -1;
+    }
+
+    System::Void Source::PrefetchZoomDelta::set(System::Int32 value)
+    {
+        if (value < 0)
+            _source->setPrefetchZoomDelta(std::nullopt);
+        else
+            _source->setPrefetchZoomDelta(std::optional<uint8_t>((uint8_t)value));
+    }
+
+    System::Int32 Source::MaxOverscaleFactorForParentTiles::get()
+    {
+        auto val = _source->getMaxOverscaleFactorForParentTiles();
+        return val.has_value() ? (System::Int32)*val : -1;
+    }
+
+    System::Void Source::MaxOverscaleFactorForParentTiles::set(System::Int32 value)
+    {
+        if (value < 0)
+            _source->setMaxOverscaleFactorForParentTiles(std::nullopt);
+        else
+            _source->setMaxOverscaleFactorForParentTiles(std::optional<uint8_t>((uint8_t)value));
+    }
 }

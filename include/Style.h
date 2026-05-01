@@ -70,23 +70,25 @@ namespace DOTNET_NAMESPACE
         CircleLayer^        AddCircleLayer(System::String^ layerId, System::String^ sourceId);
         SymbolLayer^        AddSymbolLayer(System::String^ layerId, System::String^ sourceId);
         RasterLayer^        AddRasterLayer(System::String^ layerId, System::String^ sourceId);
-        BackgroundLayer^    AddBackgroundLayer(System::String^ layerId);
-        HeatmapLayer^       AddHeatmapLayer(System::String^ layerId, System::String^ sourceId);
-        HillshadeLayer^     AddHillshadeLayer(System::String^ layerId, System::String^ sourceId);
-        FillExtrusionLayer^ AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId);
-        ColorReliefLayer^   AddColorReliefLayer(System::String^ layerId, System::String^ sourceId);
+        BackgroundLayer^            AddBackgroundLayer(System::String^ layerId);
+        HeatmapLayer^               AddHeatmapLayer(System::String^ layerId, System::String^ sourceId);
+        HillshadeLayer^             AddHillshadeLayer(System::String^ layerId, System::String^ sourceId);
+        FillExtrusionLayer^         AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId);
+        ColorReliefLayer^           AddColorReliefLayer(System::String^ layerId, System::String^ sourceId);
+        LocationIndicatorLayer^     AddLocationIndicatorLayer(System::String^ layerId);
 
         /// <summary>Same as the two-arg overloads but inserts the layer before <paramref name="beforeLayerId"/>.</summary>
-        FillLayer^          AddFillLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        LineLayer^          AddLineLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        CircleLayer^        AddCircleLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        SymbolLayer^        AddSymbolLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        RasterLayer^        AddRasterLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        BackgroundLayer^    AddBackgroundLayer(System::String^ layerId, System::String^ beforeLayerId);
-        HeatmapLayer^       AddHeatmapLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        HillshadeLayer^     AddHillshadeLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        FillExtrusionLayer^ AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
-        ColorReliefLayer^   AddColorReliefLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        FillLayer^                  AddFillLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        LineLayer^                  AddLineLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        CircleLayer^                AddCircleLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        SymbolLayer^                AddSymbolLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        RasterLayer^                AddRasterLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        BackgroundLayer^            AddBackgroundLayer(System::String^ layerId, System::String^ beforeLayerId);
+        HeatmapLayer^               AddHeatmapLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        HillshadeLayer^             AddHillshadeLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        FillExtrusionLayer^         AddFillExtrusionLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        ColorReliefLayer^           AddColorReliefLayer(System::String^ layerId, System::String^ sourceId, System::String^ beforeLayerId);
+        LocationIndicatorLayer^     AddLocationIndicatorLayer(System::String^ layerId, System::String^ beforeLayerId);
 
         /// <summary>Remove a layer by id. Returns true if removed.</summary>
         System::Boolean RemoveLayer(System::String^ layerId);
@@ -98,8 +100,12 @@ namespace DOTNET_NAMESPACE
         // -------------------------------------------------------------------------
 
         GeoJSONSource^    AddGeoJsonSource(System::String^ sourceId);
+        /// <summary>Add a GeoJSON source with explicit tile/cluster options.</summary>
+        GeoJSONSource^    AddGeoJsonSource(System::String^ sourceId, GeoJSONOptions^ options);
         /// <summary>Add a GeoJSON source that immediately loads from a URL.</summary>
         GeoJSONSource^    AddGeoJsonSourceFromUrl(System::String^ sourceId, System::String^ url);
+        /// <summary>Add a GeoJSON source from a URL with explicit tile/cluster options.</summary>
+        GeoJSONSource^    AddGeoJsonSourceFromUrl(System::String^ sourceId, System::String^ url, GeoJSONOptions^ options);
         VectorSource^     AddVectorSource(System::String^ sourceId, System::String^ url);
         RasterSource^     AddRasterSource(System::String^ sourceId, System::String^ url, System::UInt16 tileSize);
         RasterDEMSource^  AddRasterDemSource(System::String^ sourceId, System::String^ url, System::UInt16 tileSize);
