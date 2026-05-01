@@ -61,14 +61,15 @@ jobs:
       fail-fast: false
       matrix:
         dotnet: [net8.0, net9.0]
+        arch: [x64, arm64]
         include:
-          - runs-on: windows-latest
-            arch: x64
+          - arch: x64
+            runs-on: windows-latest
             vcpkg-triplet: x64-windows
             msvc-arch: x64
             vs-arch: x64
-          - runs-on: windows-11-arm
-            arch: arm64
+          - arch: arm64
+            runs-on: windows-11-arm
             vcpkg-triplet: arm64-windows
             msvc-arch: arm64
             vs-arch: ARM64
