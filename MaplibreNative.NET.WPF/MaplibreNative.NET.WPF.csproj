@@ -11,7 +11,7 @@
 
   <!-- Reference the DLL from the local cmake build output.
        When consuming this project from another repo, either:
-         (a) build MaplibreNative.NET-ac first so build\Release\MaplibreNative.NET.dll exists, or
+         (a) build MaplibreNative.NET first so build\Release\MaplibreNative.NET.dll exists, or
          (b) override _MaplibreNativeDll in a Directory.Build.props in your repo. -->
   <PropertyGroup>
     <_MaplibreNativeDll Condition="Exists('..\build\Release\MaplibreNative.NET.dll')">..\build\Release\MaplibreNative.NET.dll</_MaplibreNativeDll>
