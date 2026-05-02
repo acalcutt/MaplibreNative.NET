@@ -85,6 +85,75 @@ namespace
     }
 
     // -------------------------------------------------------------------------
+    // Version-agnostic getters/setters extracted from managed member functions
+    // (C++/CLI forbids generic lambdas — local template types — in managed fns)
+    // -------------------------------------------------------------------------
+
+    // SymbolLayer::IconPadding — float (old) or mbgl::Padding (new)
+    template<typename PropVal>
+    inline float GetIconPadding(const PropVal& pv)
+    {
+        using T = std::decay_t<decltype(pv.asConstant())>;
+        if constexpr (std::is_same_v<T, float>)
+            return GetFloat(pv, 2.0f);
+        else  // mbgl::Padding
+            return pv.isConstant() ? pv.asConstant().top : 2.0f;
+    }
+
+    template<typename LayerImpl>
+    inline void SetIconPadding(LayerImpl* impl, float value)
+    {
+        using T = std::decay_t<decltype(impl->getIconPadding().asConstant())>;
+        if constexpr (std::is_same_v<T, float>)
+            impl->setIconPadding(mbgl::style::PropertyValue<T>(value));
+        else  // mbgl::Padding — uniform padding on all sides
+            impl->setIconPadding(mbgl::style::PropertyValue<T>(T{value, value, value, value}));
+    }
+
+    // HillshadeLayer::IlluminationDirection — float (old) or vector<float> (new)
+    template<typename PropVal>
+    inline float GetIlluminationDirection(const PropVal& pv)
+    {
+        using T = std::decay_t<decltype(pv.asConstant())>;
+        if constexpr (std::is_same_v<T, float>)
+            return GetFloat(pv, 335.0f);
+        else  // std::vector<float>
+            return (pv.isConstant() && !pv.asConstant().empty()) ? pv.asConstant()[0] : 335.0f;
+    }
+
+    template<typename LayerImpl>
+    inline void SetIlluminationDirection(LayerImpl* impl, float value)
+    {
+        using T = std::decay_t<decltype(impl->getHillshadeIlluminationDirection().asConstant())>;
+        if constexpr (std::is_same_v<T, float>)
+            impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>(value));
+        else  // std::vector<float>
+            impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>({value}));
+    }
+
+    // HillshadeLayer::ShadowColor — Color (old) or vector<Color> (new)
+    template<typename LayerImpl>
+    inline void SetHillshadeShadowColor(LayerImpl* impl, mbgl::Color c)
+    {
+        using T = std::decay_t<decltype(impl->getHillshadeShadowColor().asConstant())>;
+        if constexpr (std::is_same_v<T, mbgl::Color>)
+            impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>(c));
+        else  // std::vector<mbgl::Color>
+            impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>({c}));
+    }
+
+    // HillshadeLayer::HighlightColor — Color (old) or vector<Color> (new)
+    template<typename LayerImpl>
+    inline void SetHillshadeHighlightColor(LayerImpl* impl, mbgl::Color c)
+    {
+        using T = std::decay_t<decltype(impl->getHillshadeHighlightColor().asConstant())>;
+        if constexpr (std::is_same_v<T, mbgl::Color>)
+            impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>(c));
+        else  // std::vector<mbgl::Color>
+            impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>({c}));
+    }
+
+    // -------------------------------------------------------------------------
     // Helpers: serialize mbgl::Value to JSON string (used for expression props)
     // -------------------------------------------------------------------------
     static void WriteValue(rapidjson::Writer<rapidjson::StringBuffer>& writer,
@@ -766,24 +835,12 @@ namespace DOTNET_NAMESPACE
 
     float SymbolLayer::IconPadding::get()
     {
-        return [](const auto& pv) -> float {
-            using T = std::decay_t<decltype(pv.asConstant())>;
-            if constexpr (std::is_same_v<T, float>)
-                return GetFloat(pv, 2.0f);
-            else  // mbgl::Padding
-                return pv.isConstant() ? pv.asConstant().top : 2.0f;
-        }(Impl()->getIconPadding());
+        return GetIconPadding(Impl()->getIconPadding());
     }
 
     System::Void SymbolLayer::IconPadding::set(float value)
     {
-        [value](auto* impl) {
-            using T = std::decay_t<decltype(impl->getIconPadding().asConstant())>;
-            if constexpr (std::is_same_v<T, float>)
-                impl->setIconPadding(mbgl::style::PropertyValue<T>(value));
-            else  // mbgl::Padding — uniform padding on all sides
-                impl->setIconPadding(mbgl::style::PropertyValue<T>(T{value, value, value, value}));
-        }(Impl());
+        SetIconPadding(Impl(), value);
     }
 
     bool SymbolLayer::IconKeepUpright::get()
@@ -1543,24 +1600,12 @@ namespace DOTNET_NAMESPACE
 
     float HillshadeLayer::IlluminationDirection::get()
     {
-        return [](const auto& pv) -> float {
-            using T = std::decay_t<decltype(pv.asConstant())>;
-            if constexpr (std::is_same_v<T, float>)
-                return GetFloat(pv, 335.0f);
-            else  // std::vector<float>
-                return (pv.isConstant() && !pv.asConstant().empty()) ? pv.asConstant()[0] : 335.0f;
-        }(Impl()->getHillshadeIlluminationDirection());
+        return GetIlluminationDirection(Impl()->getHillshadeIlluminationDirection());
     }
 
     System::Void HillshadeLayer::IlluminationDirection::set(float value)
     {
-        [value](auto* impl) {
-            using T = std::decay_t<decltype(impl->getHillshadeIlluminationDirection().asConstant())>;
-            if constexpr (std::is_same_v<T, float>)
-                impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>(value));
-            else  // std::vector<float>
-                impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>({value}));
-        }(Impl());
+        SetIlluminationDirection(Impl(), value);
     }
 
     System::String^ HillshadeLayer::ShadowColor::get()
@@ -1570,14 +1615,7 @@ namespace DOTNET_NAMESPACE
 
     System::Void HillshadeLayer::ShadowColor::set(System::String^ value)
     {
-        mbgl::Color c = ParseColor(value);
-        [c](auto* impl) {
-            using T = std::decay_t<decltype(impl->getHillshadeShadowColor().asConstant())>;
-            if constexpr (std::is_same_v<T, mbgl::Color>)
-                impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>(c));
-            else  // std::vector<mbgl::Color>
-                impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>({c}));
-        }(Impl());
+        SetHillshadeShadowColor(Impl(), ParseColor(value));
     }
 
     System::String^ HillshadeLayer::HighlightColor::get()
@@ -1587,14 +1625,7 @@ namespace DOTNET_NAMESPACE
 
     System::Void HillshadeLayer::HighlightColor::set(System::String^ value)
     {
-        mbgl::Color c = ParseColor(value);
-        [c](auto* impl) {
-            using T = std::decay_t<decltype(impl->getHillshadeHighlightColor().asConstant())>;
-            if constexpr (std::is_same_v<T, mbgl::Color>)
-                impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>(c));
-            else  // std::vector<mbgl::Color>
-                impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>({c}));
-        }(Impl());
+        SetHillshadeHighlightColor(Impl(), ParseColor(value));
     }
 
     System::String^ HillshadeLayer::AccentColor::get()
