@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/dependencies/maplibre-native/platform/windows/custom-toolchain.cmake)
 
-set(MAPLIBRE_NET_VERSION "1.0.3")
+set(MAPLIBRE_NET_VERSION "2.0.0")
 project("MaplibreNative.NET" LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -13,7 +13,7 @@ endif()
 
 add_library(mbgl-dotnet SHARED)
 
-set(MAPLIBRE_NET_DOTNET_VERSION "net8.0" CACHE STRING "Target .NET version for the C++/CLI wrapper (e.g. net8.0, net9.0)")
+set(MAPLIBRE_NET_DOTNET_VERSION "net8.0" CACHE STRING "Target .NET version for the C++/CLI wrapper (e.g. net6.0, net8.0, net9.0)")
 
 set(ASSEMBLY_NAME "MaplibreNative.NET")
 
