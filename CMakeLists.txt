@@ -13,7 +13,7 @@ endif()
 
 add_library(mbgl-dotnet SHARED)
 
-set(MAPLIBRE_NET_DOTNET_VERSION "net8.0" CACHE STRING "Target .NET version for the C++/CLI wrapper (e.g. net8.0, net9.0)")
+set(MAPLIBRE_NET_DOTNET_VERSION "net8.0" CACHE STRING "Target .NET version for the C++/CLI wrapper (e.g. net6.0, net8.0, net9.0)")
 
 set(ASSEMBLY_NAME "MaplibreNative.NET")
 
