@@ -70,6 +70,62 @@ You can check other examples at the [Examples](https://github.com/tdcosta100/Map
 
 **Attention:** the examples reference `MaplibreNative.NET.dll` at `build\Release`. Build MaplibreNative.NET with `Release` configuration before building the examples (see *Building the sources* below).
 
+## WPF map control (`MaplibreNative.NET.WPF`)
+
+The `MaplibreNative.NET.WPF/` folder is an optional C# helper library that makes it easy to embed a live, interactive MapLibre map inside a **WPF window**.
+
+### Why it's a separate project
+
+`MaplibreNative.NET.dll` is a C++/CLI assembly compiled for `x64` only. A WPF project that references it directly must also be `x64` and have `<UseWPF>true</UseWPF>`. Isolating those constraints in their own `.csproj` keeps the consuming app free of those settings and makes the control reusable across multiple WPF apps.
+
+### What's in it
+
+| File | Purpose |
+|---|---|
+| `MaplibreMapHost.cs` | WPF `HwndHost` that creates a native Win32 child window, initialises a MapLibre OpenGL context inside it, and drives the render loop via a `DispatcherTimer`. Exposes a public API for camera control, GeoJSON layers, and the location indicator. |
+| `DelegateMapObserver.cs` | Thin `MapObserver` subclass that forwards observer events to `Action` callbacks so you don't need to subclass `MapObserver` yourself. |
+
+### Key `MaplibreMapHost` API
+
+| Member | Description |
+|---|---|
+| `StyleUrl` | Dependency property — set the map style URL from XAML or code-behind. |
+| `ShowNavigationControls` | Show/hide the built-in zoom-in, zoom-out, and reset-north overlay buttons. |
+| `FollowLocation` | When `true`, each GPS fix re-centres the map (zoom-14 on first fix, zoom-preserving thereafter). |
+| `ShowBearing` | When `true`, the location indicator arrow follows the GPS track heading; when `false` it always points north. |
+| `CenterOn(lat, lon, zoom)` | Jump to a position at a given zoom level. |
+| `ZoomIn()` / `ZoomOut()` | Zoom by one level. |
+| `ResetNorth()` | Snap bearing back to 0°. |
+| `SetWifiGeoJsonLayerData(sourceId, geoJson)` | Push or update a GeoJSON source of wifi AP circles (three security-type circle sub-layers). |
+| `SetWifiGeoJsonLayer(sourceId, url)` | Fetch and display a GeoJSON layer from a URL. |
+| `RemoveWifiGeoJsonLayer(sourceId)` | Remove the source and all associated layers. |
+| `UpdateLocationIndicator(lat, lon, bearing, accuracyMeters)` | Show or move the blue "user location" dot. Deferred safely until the style is ready. |
+| `ClearLocationIndicator()` | Remove the location dot. |
+
+All style-related API calls (`AddLocationIndicatorLayer`, etc.) are resolved at runtime via reflection so that the WPF library continues to compile against older DLL builds that may not yet have those methods.
+
+### XAML usage
+
+```xml
+<Window ...
+        xmlns:ml="clr-namespace:MaplibreNative.WPF;assembly=MaplibreNative.NET.WPF">
+
+    <ml:MaplibreMapHost x:Name="MapHost"
+                        StyleUrl="https://demotiles.maplibre.org/style.json"
+                        ShowNavigationControls="True"/>
+</Window>
+```
+
+### Referencing the project
+
+The `.csproj` looks for `MaplibreNative.NET.dll` at `../build/Release/MaplibreNative.NET.dll` (the local CMake build output). If you vendor a pre-built DLL, override `_MaplibreNativeDll` in a `Directory.Build.props` in your repo:
+
+```xml
+<PropertyGroup>
+  <_MaplibreNativeDll>$(MSBuildThisFileDirectory)..\lib\x64\MaplibreNative.NET.dll</_MaplibreNativeDll>
+</PropertyGroup>
+```
+
 ## Programmatic style API
 
 After loading a style, you can add or modify sources and layers at runtime using the typed style API.
