@@ -2,13 +2,13 @@
 
 # MaplibreNative.NET
 
-This is a .NET wrapper to the [maplibre-native](https://github.com/maplibre/maplibre-native). It is meant to be used on Windows and requires **.NET 8.0 or newer** (uses C++/CLI `/clr:netcore`).
+This is a .NET wrapper to the [maplibre-native](https://github.com/maplibre/maplibre-native). It is meant to be used on Windows and requires **.NET 6.0 or newer** (uses C++/CLI `/clr:netcore`).
 
 ## Using in your project
 
 Just add a reference to the `MaplibreNative.NET.dll` (see below how to build from sources), and you can immediately use the classes in the `MaplibreNative` namespace.
 
-This is a minimal example using the `HeadlessFrontend` renderer, in a project with .NET 8.0+ (Windows) and WPF enabled:
+This is a minimal example using the `HeadlessFrontend` renderer, in a project with .NET 6.0+ (Windows) and WPF enabled:
 
 ```cs
 using MaplibreNative;
@@ -286,7 +286,7 @@ All sources share properties from `Source`:
   In Visual Studio Installer, confirm that these individual components are selected:
   - `C++ CMake tools for Windows`
   - `Git for Windows` (if git is not already installed)
-- **.NET 8 SDK** (or newer) — required for the C++/CLI `/clr:netcore` compilation.
+- **.NET 6 SDK** (or newer) — required for the C++/CLI `/clr:netcore` compilation.
 - **PowerShell** (included with Windows).
 
 ### Downloading sources
@@ -327,13 +327,13 @@ $env:VCPKG_BINARY_SOURCES = "clear;files,$PWD\dependencies\maplibre-native\platf
   "-DCMAKE_CXX_FLAGS=/wd4267"
 ```
 
-To target a specific .NET version (default is `net8.0`):
+To target a specific .NET version (default is `net8.0`; supported values: `net6.0`, `net8.0`, `net9.0`):
 
 ```powershell
 & $cmake -B build -G "Visual Studio 17 2022" -A x64 `
   -DMLN_WITH_OPENGL=ON -DMLN_WITH_EGL=OFF -DMLN_WITH_VULKAN=OFF `
   "-DCMAKE_CXX_FLAGS=/wd4267" `
-  "-DMAPLIBRE_NET_DOTNET_VERSION=net9.0"
+  "-DMAPLIBRE_NET_DOTNET_VERSION=net6.0"
 ```
 
 ### Building
