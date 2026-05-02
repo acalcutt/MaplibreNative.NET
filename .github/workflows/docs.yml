@@ -20,12 +20,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Enable Git long paths
+        run: git config --global core.longpaths true
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Enable Git long paths
-        run: git config --global core.longpaths true
 
       - name: Set up MSVC developer tools
         uses: ilammy/msvc-dev-cmd@v1
