@@ -20,6 +20,7 @@
 
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+#include <type_traits>
 
 namespace
 {
@@ -63,6 +64,24 @@ namespace
                                      System::String^ def)
     {
         return pv.isConstant() ? ColorToString(pv.asConstant()) : def;
+    }
+
+    // -------------------------------------------------------------------------
+    // Version-agnostic color getter: handles both PropertyValue<Color> and
+    // PropertyValue<vector<Color>> (newer maplibre-native builds)
+    // -------------------------------------------------------------------------
+    template<typename PropVal>
+    inline System::String^ GetColorAgnostic(const PropVal& pv, System::String^ def)
+    {
+        using T = std::decay_t<decltype(pv.asConstant())>;
+        if constexpr (std::is_same_v<T, mbgl::Color>)
+            return GetColor(pv, def);
+        else  // std::vector<mbgl::Color>
+        {
+            if (pv.isConstant() && !pv.asConstant().empty())
+                return ColorToString(pv.asConstant()[0]);
+            return def;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -445,8 +464,9 @@ namespace DOTNET_NAMESPACE
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid gradient JSON: parse error");
         mbgl::style::conversion::Error error;
+        const mbgl::JSValue& jsRoot = doc;
         auto gradient = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
-            mbgl::style::conversion::Convertible(&doc), error);
+            mbgl::style::conversion::Convertible(&jsRoot), error);
         if (!gradient)
             throw gcnew System::ArgumentException(
                 gcnew System::String(("Invalid gradient expression: " + error.message).c_str()));
@@ -746,12 +766,24 @@ namespace DOTNET_NAMESPACE
 
     float SymbolLayer::IconPadding::get()
     {
-        return GetFloat(Impl()->getIconPadding(), 2.0f);
+        return [](const auto& pv) -> float {
+            using T = std::decay_t<decltype(pv.asConstant())>;
+            if constexpr (std::is_same_v<T, float>)
+                return GetFloat(pv, 2.0f);
+            else  // mbgl::Padding
+                return pv.isConstant() ? pv.asConstant().top : 2.0f;
+        }(Impl()->getIconPadding());
     }
 
     System::Void SymbolLayer::IconPadding::set(float value)
     {
-        Impl()->setIconPadding(mbgl::style::PropertyValue<float>(value));
+        [value](auto* impl) {
+            using T = std::decay_t<decltype(impl->getIconPadding().asConstant())>;
+            if constexpr (std::is_same_v<T, float>)
+                impl->setIconPadding(mbgl::style::PropertyValue<T>(value));
+            else  // mbgl::Padding — uniform padding on all sides
+                impl->setIconPadding(mbgl::style::PropertyValue<T>(T{value, value, value, value}));
+        }(Impl());
     }
 
     bool SymbolLayer::IconKeepUpright::get()
@@ -1482,8 +1514,9 @@ namespace DOTNET_NAMESPACE
         if (doc.HasParseError())
             throw gcnew System::ArgumentException("Invalid heatmap color JSON: parse error");
         mbgl::style::conversion::Error error;
+        const mbgl::JSValue& jsRoot = doc;
         auto colorRamp = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
-            mbgl::style::conversion::Convertible(&doc), error);
+            mbgl::style::conversion::Convertible(&jsRoot), error);
         if (!colorRamp)
             throw gcnew System::ArgumentException(
                 gcnew System::String(("Invalid heatmap color expression: " + error.message).c_str()));
@@ -1510,32 +1543,58 @@ namespace DOTNET_NAMESPACE
 
     float HillshadeLayer::IlluminationDirection::get()
     {
-        return GetFloat(Impl()->getHillshadeIlluminationDirection(), 335.0f);
+        return [](const auto& pv) -> float {
+            using T = std::decay_t<decltype(pv.asConstant())>;
+            if constexpr (std::is_same_v<T, float>)
+                return GetFloat(pv, 335.0f);
+            else  // std::vector<float>
+                return (pv.isConstant() && !pv.asConstant().empty()) ? pv.asConstant()[0] : 335.0f;
+        }(Impl()->getHillshadeIlluminationDirection());
     }
 
     System::Void HillshadeLayer::IlluminationDirection::set(float value)
     {
-        Impl()->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<float>(value));
+        [value](auto* impl) {
+            using T = std::decay_t<decltype(impl->getHillshadeIlluminationDirection().asConstant())>;
+            if constexpr (std::is_same_v<T, float>)
+                impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>(value));
+            else  // std::vector<float>
+                impl->setHillshadeIlluminationDirection(mbgl::style::PropertyValue<T>({value}));
+        }(Impl());
     }
 
     System::String^ HillshadeLayer::ShadowColor::get()
     {
-        return GetColor(Impl()->getHillshadeShadowColor(), "#000000");
+        return GetColorAgnostic(Impl()->getHillshadeShadowColor(), "#000000");
     }
 
     System::Void HillshadeLayer::ShadowColor::set(System::String^ value)
     {
-        Impl()->setHillshadeShadowColor(mbgl::style::PropertyValue<mbgl::Color>(ParseColor(value)));
+        mbgl::Color c = ParseColor(value);
+        [c](auto* impl) {
+            using T = std::decay_t<decltype(impl->getHillshadeShadowColor().asConstant())>;
+            if constexpr (std::is_same_v<T, mbgl::Color>)
+                impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>(c));
+            else  // std::vector<mbgl::Color>
+                impl->setHillshadeShadowColor(mbgl::style::PropertyValue<T>({c}));
+        }(Impl());
     }
 
     System::String^ HillshadeLayer::HighlightColor::get()
     {
-        return GetColor(Impl()->getHillshadeHighlightColor(), "#ffffff");
+        return GetColorAgnostic(Impl()->getHillshadeHighlightColor(), "#ffffff");
     }
 
     System::Void HillshadeLayer::HighlightColor::set(System::String^ value)
     {
-        Impl()->setHillshadeHighlightColor(mbgl::style::PropertyValue<mbgl::Color>(ParseColor(value)));
+        mbgl::Color c = ParseColor(value);
+        [c](auto* impl) {
+            using T = std::decay_t<decltype(impl->getHillshadeHighlightColor().asConstant())>;
+            if constexpr (std::is_same_v<T, mbgl::Color>)
+                impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>(c));
+            else  // std::vector<mbgl::Color>
+                impl->setHillshadeHighlightColor(mbgl::style::PropertyValue<T>({c}));
+        }(Impl());
     }
 
     System::String^ HillshadeLayer::AccentColor::get()
@@ -1715,8 +1774,9 @@ namespace DOTNET_NAMESPACE
             throw gcnew System::ArgumentException("Invalid color ramp JSON: parse error");
 
         mbgl::style::conversion::Error error;
+        const mbgl::JSValue& jsRoot = doc;
         auto colorRamp = mbgl::style::conversion::convert<mbgl::style::ColorRampPropertyValue>(
-            mbgl::style::conversion::Convertible(&doc), error);
+            mbgl::style::conversion::Convertible(&jsRoot), error);
         if (!colorRamp)
             throw gcnew System::ArgumentException(
                 gcnew System::String(("Invalid color ramp expression: " + error.message).c_str()));

@@ -183,8 +183,9 @@ namespace DOTNET_NAMESPACE
             throw gcnew System::ArgumentException("Invalid filter JSON: parse error");
 
         mbgl::style::conversion::Error error;
+        const mbgl::JSValue& jsRoot = doc;
         auto filter = mbgl::style::conversion::convert<mbgl::style::Filter>(
-            mbgl::style::conversion::Convertible(&doc), error);
+            mbgl::style::conversion::Convertible(&jsRoot), error);
         if (!filter)
             throw gcnew System::ArgumentException(
                 gcnew System::String(("Invalid filter expression: " + error.message).c_str()));
