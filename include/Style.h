@@ -195,6 +195,11 @@ namespace DOTNET_NAMESPACE
                                     System::String^ color, float radius, float opacity,
                                     System::String^ filterJson);
 
+        /// <summary>
+        /// Returns a deduplicated list of non-empty attribution strings from all loaded sources.
+        /// </summary>
+        System::Collections::Generic::List<System::String^>^ GetSourceAttributions();
+
     internal:
         Style(NativePointerHolder<mbgl::style::Style>^ nativePointerHolder);
     };

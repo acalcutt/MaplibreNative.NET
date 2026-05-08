@@ -83,5 +83,15 @@ namespace DOTNET_NAMESPACE
         /// Throws if the JSON cannot be parsed as a valid filter expression.
         /// </summary>
         System::Void SetFilter(System::String^ filterJson);
+
+        /// <summary>
+        /// Returns the JSON-encoded value of a paint property, or an empty string if not set.
+        /// </summary>
+        System::String^ GetPaintProperty(System::String^ name);
+
+        /// <summary>
+        /// Returns the JSON-encoded value of a layout property, or an empty string if not set.
+        /// </summary>
+        System::String^ GetLayoutProperty(System::String^ name);
     };
 }

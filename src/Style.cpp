@@ -635,4 +635,21 @@ namespace DOTNET_NAMESPACE
     {
         NativePointer->removeImage(Convert::ToStdString(id));
     }
+
+    System::Collections::Generic::List<System::String^>^ Style::GetSourceAttributions()
+    {
+        auto result = gcnew System::Collections::Generic::List<System::String^>();
+        auto seen = gcnew System::Collections::Generic::HashSet<System::String^>();
+        for (auto* raw : NativePointer->getSources())
+        {
+            auto attr = raw->getAttribution();
+            if (attr && !attr->empty())
+            {
+                auto managed = Convert::ToSystemString(*attr);
+                if (seen->Add(managed))
+                    result->Add(managed);
+            }
+        }
+        return result;
+    }
 }
