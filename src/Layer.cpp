@@ -192,4 +192,20 @@ namespace DOTNET_NAMESPACE
 
         _layer->setFilter(*filter);
     }
+
+    System::String^ Layer::GetPaintProperty(System::String^ name)
+    {
+        auto prop = _layer->getProperty(msclr::interop::marshal_as<std::string>(name));
+        if (prop.getKind() == mbgl::style::StyleProperty::Kind::Undefined)
+            return System::String::Empty;
+        return msclr::interop::marshal_as<System::String^>(ValueToJsonString(prop.getValue()));
+    }
+
+    System::String^ Layer::GetLayoutProperty(System::String^ name)
+    {
+        auto prop = _layer->getProperty(msclr::interop::marshal_as<std::string>(name));
+        if (prop.getKind() == mbgl::style::StyleProperty::Kind::Undefined)
+            return System::String::Empty;
+        return msclr::interop::marshal_as<System::String^>(ValueToJsonString(prop.getValue()));
+    }
 }
