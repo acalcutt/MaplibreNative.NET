@@ -9,9 +9,6 @@
 
 ## 2.1.0
 ### ✨ Features and improvements
-
-### 🐞 Bug fixes
-
 - Add Layer property read-back, Style.GetSourceAttributions, Renderer.Q… ([#5](https://github.com/acalcutt/MaplibreNative.NET/pull/5)) (@acalcutt)
 
 ## 2.0.0
