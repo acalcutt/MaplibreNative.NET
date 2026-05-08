@@ -440,6 +440,7 @@ public class MaplibreMapHost : HwndHost
     private bool                              _glReady;
     private bool                              _initialized;
     private bool                              _renderNeedsUpdate = true;
+    private bool                              _frontendHasUpdate;
     private float                             _dpi = 1.0f;
     private int                               _renderTickCount;
 
@@ -870,7 +871,7 @@ public class MaplibreMapHost : HwndHost
         _runLoop = new RunLoop(RunLoop.Type.New);
 
         _frontend = new ExternalRenderingContextFrontend(_hDC, _hGLRC, sizePhysical, dpi);
-        _frontend.Updated += _ => { _renderNeedsUpdate = true; };
+        _frontend.Updated += _ => { _frontendHasUpdate = true; _renderNeedsUpdate = true; };
         Log($"InitMaplibre: logical={wL}x{hL} physical={wP}x{hP} dpi={dpi}");
 
         var mapOptions = new MapOptions()
@@ -927,7 +928,7 @@ public class MaplibreMapHost : HwndHost
         // Pump libuv so HTTP responses for style/tiles are delivered.
         _runLoop?.RunOnce();
 
-        if (_renderNeedsUpdate && _glReady && _frontend != null)
+        if (_renderNeedsUpdate && _frontendHasUpdate && _glReady && _frontend != null)
         {
             _renderNeedsUpdate = false;
             wglMakeCurrent(_hDC, _hGLRC);
