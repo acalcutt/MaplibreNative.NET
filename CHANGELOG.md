@@ -7,6 +7,13 @@
 ### 🐞 Bug fixes
 - _...Add new stuff here..._
 
+## 2.1.0
+### ✨ Features and improvements
+
+### 🐞 Bug fixes
+
+- Add Layer property read-back, Style.GetSourceAttributions, Renderer.Q… ([#5](https://github.com/acalcutt/MaplibreNative.NET/pull/5)) (@acalcutt)
+
 ## 2.0.0
 ### ✨ Features and improvements
 - Add full Layer and Source type wrapping (CircleLayer, FillLayer, LineLayer, SymbolLayer, RasterLayer, HillshadeLayer, HeatmapLayer, BackgroundLayer, FillExtrusionLayer, LocationIndicatorLayer, ColorReliefLayer)
